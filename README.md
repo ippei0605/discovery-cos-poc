@@ -3,16 +3,13 @@
 
 久々なので、 vlu-cli を更新します。
 ```
-sudo npm update -g vue-cli
+$ sudo npm update -g vue-cli
 ```
 
-プロジェクトを作成します。
+プロジェクトをデフォルト設定で作成します。
 ```
-vue init webpack client
-```
+$ vue init webpack client
 
-デフォルト設定で作成します。
-```
 ? Project name client
 ? Project description A Vue.js project
 ? Author Ippei SUZUKI <i.suzuki@jiec.co.jp>
