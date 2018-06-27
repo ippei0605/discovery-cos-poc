@@ -10,10 +10,10 @@
     "login": "ibmcloud login -a https://api.ng.bluemix.net -c 48984e66e3b9b429a0cfe14d0637f075 -o sieg_dev -s survey",
     "service_create": "ibmcloud resource service-instance-create discovery-cos-poc-cos cloud-object-storage lite global && ibmcloud resource service-alias-create discovery-cos-poc-cos-alias --instance-name discovery-cos-poc-cos && ibmcloud service create discovery lite discovery-cos-poc-discovery",
     "service_delete": "ibmcloud resource service-alias-delete discovery-cos-poc-cos-alias --force && ibmcloud resource service-instance-delete discovery-cos-poc-cos --force && ibmcloud service delete discovery-cos-poc-discovery -f",
-    "push": "bx app push cos-poc-ippei",
+    "push": "ibmcloud app push discovery-cos-poc",
     "start": "node app",
-    "page": "opener https://cos-poc-ippei.au-syd.mybluemix.net/",
-    "vcap_services": "bx app env cos-poc-ippei | node node_modules/cfenv-one-liner -p VCAP_SERVICES"
+    "page": "opener https://discovery-cos-poc.mybluemix.net/",
+    "vcap_services": "ibmcloud app env discovery-cos-poc | node node_modules/cfenv-one-liner -p VCAP_SERVICES"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

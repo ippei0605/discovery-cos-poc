@@ -1,0 +1,10 @@
+applications:
+- disk_quota: 1024M
+  host: discovery-cos-poc
+  name: discovery-cos-poc
+  path: .
+  domain: mybluemix.net
+  instances: 1
+  memory: 256M
+  services:
+  - discovery-cos-poc-cos-alias
