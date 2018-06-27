@@ -1,4 +1,4 @@
-# Watson Discovery & COS PoC
+# Watson DiscoveryModel & COS PoC
 
 
 久々なので、 vlu-cli を更新します。

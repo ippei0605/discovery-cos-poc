@@ -7,6 +7,8 @@
     "node": "8.9.4"
   },
   "scripts": {
+    "app_restart ": "ibmcloud app restart discovery-cos-poc",
+    "app_stop": "ibmcloud app stop discovery-cos-poc",
     "login": "ibmcloud login -a https://api.ng.bluemix.net -c 48984e66e3b9b429a0cfe14d0637f075 -o sieg_dev -s survey",
     "service_create": "ibmcloud resource service-instance-create discovery-cos-poc-cos cloud-object-storage lite global && ibmcloud resource service-alias-create discovery-cos-poc-cos-alias --instance-name discovery-cos-poc-cos && ibmcloud service create discovery lite discovery-cos-poc-discovery",
     "service_delete": "ibmcloud resource service-alias-delete discovery-cos-poc-cos-alias --force && ibmcloud resource service-instance-delete discovery-cos-poc-cos --force && ibmcloud service delete discovery-cos-poc-discovery -f",
@@ -23,7 +25,8 @@
     "morgan": "^1.9.0",
     "multer": "^1.3.0",
     "serve-favicon": "^2.5.0",
-    "vcap_services": "^0.3.4"
+    "vcap_services": "^0.3.4",
+    "watson-developer-cloud": "^3.5.1"
   },
   "devDependencies": {
     "cfenv-one-liner": "0.0.2",

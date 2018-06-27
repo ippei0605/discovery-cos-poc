@@ -10,18 +10,16 @@
 const
     cfenv = require('cfenv'),
     vcapServices = require('vcap_services'),
-    cosCreds = vcapServices.getCredentials('cloud-object-storage');
+    cosCreds = vcapServices.getCredentials('cloud-object-storage'),
+    discoveryCreds = vcapServices.getCredentials('discovery');
 
 // 環境変数を取得する。
 const appEnv = cfenv.getAppEnv();
 
-/**
- * コンテキスト
- * @type {{PORT: *, URL: *, APIKEY: *, RESOURCE_INSTANCE_ID: *}}
- */
 module.exports = {
     PORT: appEnv.port,
     URL: appEnv.url,
     APIKEY: cosCreds.apikey,
-    RESOURCE_INSTANCE_ID: cosCreds.resource_instance_id
+    RESOURCE_INSTANCE_ID: cosCreds.resource_instance_id,
+    DISCOVERY_CREDS: discoveryCreds
 };

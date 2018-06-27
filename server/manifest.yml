@@ -8,3 +8,4 @@ applications:
   memory: 256M
   services:
   - discovery-cos-poc-cos-alias
+  - discovery-cos-poc-discovery

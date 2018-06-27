@@ -1,0 +1,104 @@
+/**
+ * DiscoveryModel COS PoC Server: Discovery Model
+ *
+ * @module models/discovery-model
+ * @author Ippei SUZUKI
+ */
+
+'use strict';
+
+// モジュールを読込む。
+const DiscoveryV1 = require('watson-developer-cloud/discovery/v1');
+
+class DiscoveryModel {
+
+    constructor (creds) {
+        try {
+            this.discovery = new DiscoveryV1({
+                username: creds.username,
+                password: creds.password,
+                version_date: '2018-03-05'
+            });
+        } catch (e) {
+            console.log('error:', e);
+        }
+    }
+
+    createEnvironment (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.name) throw new Error('Missing required parameters: name');
+                this.discovery.createEnvironment(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    listEnvironments (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.discovery.listEnvironments(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    listConfigurations (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
+                this.discovery.listConfigurations(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    getConfiguration (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
+                if (!params.configuration_id) throw new Error('Missing required parameters: configuration_id');
+                this.discovery.getConfiguration(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+}
+
+module.exports = DiscoveryModel;
