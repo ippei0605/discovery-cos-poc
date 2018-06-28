@@ -7,12 +7,11 @@
     "node": "8.9.4"
   },
   "scripts": {
-    "app_restart ": "ibmcloud app restart discovery-cos-poc",
-    "app_stop": "ibmcloud app stop discovery-cos-poc",
     "login": "ibmcloud login -a https://api.ng.bluemix.net -c 48984e66e3b9b429a0cfe14d0637f075 -o sieg_dev -s survey",
     "service_create": "ibmcloud resource service-instance-create discovery-cos-poc-cos cloud-object-storage lite global && ibmcloud resource service-alias-create discovery-cos-poc-cos-alias --instance-name discovery-cos-poc-cos && ibmcloud service create discovery lite discovery-cos-poc-discovery",
-    "service_delete": "ibmcloud resource service-alias-delete discovery-cos-poc-cos-alias --force && ibmcloud resource service-instance-delete discovery-cos-poc-cos --force && ibmcloud service delete discovery-cos-poc-discovery -f",
+    "service_delete": "ibmcloud service unbind discovery-cos-poc discovery-cos-poc-cos-alias && ibmcloud service unbind discovery-cos-poc discovery-cos-poc-discovery && ibmcloud resource service-alias-delete discovery-cos-poc-cos-alias -f && ibmcloud resource service-instance-delete discovery-cos-poc-cos -f && ibmcloud service delete discovery-cos-poc-discovery -f",
     "push": "ibmcloud app push discovery-cos-poc",
+    "postinstall": "node postinstall",
     "start": "node app",
     "page": "opener https://discovery-cos-poc.mybluemix.net/",
     "vcap_services": "ibmcloud app env discovery-cos-poc | node node_modules/cfenv-one-liner -p VCAP_SERVICES"

@@ -19,7 +19,6 @@ const appEnv = cfenv.getAppEnv();
 module.exports = {
     PORT: appEnv.port,
     URL: appEnv.url,
-    APIKEY: cosCreds.apikey,
-    RESOURCE_INSTANCE_ID: cosCreds.resource_instance_id,
+    COS_CREDS: cosCreds,
     DISCOVERY_CREDS: discoveryCreds
 };
