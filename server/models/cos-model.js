@@ -68,6 +68,24 @@ class CosModel {
         });
     }
 
+    putObject (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.cos.putObject(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
 }
 
 module.exports = CosModel;

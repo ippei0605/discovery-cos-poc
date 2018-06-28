@@ -120,6 +120,26 @@ class DiscoveryModel {
         });
     }
 
+    // https://www.ibm.com/watson/developercloud/discovery/api/v1/node.html?node#list-collections
+    listCollections (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
+                this.discovery.listCollections(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
     // https://www.ibm.com/watson/developercloud/discovery/api/v1/node.html?node#create-collection
     createCollection (params) {
         return new Promise((resolve, reject) => {
@@ -127,6 +147,27 @@ class DiscoveryModel {
                 if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
                 if (!params.name) throw new Error('Missing required parameters: name');
                 this.discovery.createCollection(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    // https://www.ibm.com/watson/developercloud/discovery/api/v1/node.html?node#add-document
+    addDocument (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
+                if (!params.collection_id) throw new Error('Missing required parameters: collection_id');
+                this.discovery.addDocument(params, (error, value) => {
                     if (error) {
                         console.log('error:', error);
                         reject(error);
