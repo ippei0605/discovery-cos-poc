@@ -16,6 +16,7 @@
     </el-upload>
     <h2>Documents</h2>
     <el-table
+      v-loading="loadingTable"
       :data="result.results"
       style="width: 100%">
       <el-table-column type="expand">
@@ -58,6 +59,7 @@
     data () {
       return {
         loading: false,
+        loadingTable: false,
         serverUrl: context.serverUrl,
         environmentId: '',
         collectionId: '',
@@ -92,6 +94,7 @@
           });
       },
       filter () {
+        this.loadingTable = true;
         const config = {
           method: 'get',
           url: `/${this.environmentId}/${this.collectionId}`
@@ -99,9 +102,11 @@
         context.api(config)
           .then(({data: v}) => {
             this.result = v;
+            this.loadingTable = false;
           })
           .catch(e => {
             console.log('error:', e);
+            this.loadingTable = false;
           });
       },
       doSuccess (response, file) {
