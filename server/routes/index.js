@@ -16,26 +16,10 @@ const
     CosModel = require('../models/cos-model'),
     DiscoveryModel = require('../models/discovery-model');
 
+// モデルを作成する。
 const
     cos = new CosModel(context.COS_CREDS),
     discovery = new DiscoveryModel(context.DISCOVERY_CREDS);
-
-let
-    ENVIRONMENT_ID = '',
-    COLLECTION_ID = '';
-discovery.listEnvironments({
-    name: context.ENVIRONMENT_NAME
-})
-    .then(({environments: v}) => {
-        ENVIRONMENT_ID = v[0].environment_id;
-        return discovery.listCollections({
-            environment_id: ENVIRONMENT_ID,
-            name: context.COLLECTION_NAME
-        });
-    })
-    .then(({collections: v}) => {
-        COLLECTION_ID = v[0].collection_id;
-    });
 
 // ルーターを作成する。
 const router = express.Router();
@@ -53,8 +37,71 @@ const upload = multer({
     })
 });
 
+// 初期化する。
+router.get('/ready', (req, res) => {
+    let environmentId, collectionId;
+    discovery.listEnvironments({
+        name: context.ENVIRONMENT_NAME
+    })
+        .then(({environments: v}) => {
+            environmentId = v[0].environment_id;
+            return discovery.listCollections({
+                environment_id: environmentId,
+                name: context.COLLECTION_NAME
+            });
+        })
+        .then(({collections: v}) => {
+            collectionId = v[0].collection_id;
+            res.json({
+                environment_id: environmentId,
+                collection_id: collectionId
+            });
+        })
+        .catch(e => {
+            console.log('error:', e);
+            res.sendStatus(500);
+        });
+});
+
+// Object を表示する。
+router.get('/cos/:key', (req, res) => {
+    console.log(req.params.key);
+    const
+        bucket = context.BUCKET_NAME,
+        key = req.params.key;
+    cos.getObject({
+        Bucket: bucket,
+        Key: key
+    })
+        .then(v => {
+            res.set('Content-Type', v.ContentType);
+            res.send(v.Body);
+        })
+        .catch(e => {
+            console.log('error', e);
+            res.sendStatus(500);
+        });
+});
+
+// Query を実行する。
+router.get('/:environmentId/:collectionId', (req, res) => {
+    discovery.query({
+        environment_id: req.params.environmentId,
+        collection_id: req.params.collectionId,
+        filter: '',
+        count: 1000
+    })
+        .then(v => {
+            res.json(v);
+        })
+        .catch(e => {
+            console.log('error:', e);
+            res.sendStatus(500);
+        });
+});
+
 // Object をアップロードする。
-router.post('/', upload.array('upload-files'), (req, res) => {
+router.post('/:environmentId/:collectionId', upload.array('upload-files'), (req, res) => {
     if (req.files) {
         return Promise.all(req.files.map(item => {
             return cos.putObject({
@@ -65,8 +112,8 @@ router.post('/', upload.array('upload-files'), (req, res) => {
             })
                 .then(v => {
                     return discovery.addDocument({
-                        environment_id: ENVIRONMENT_ID,
-                        collection_id: COLLECTION_ID,
+                        environment_id: req.params.environmentId,
+                        collection_id: req.params.collectionId,
                         file: fs.createReadStream(item.path),
                         file_content_type: item.mimetype
                     });

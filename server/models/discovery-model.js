@@ -182,6 +182,28 @@ class DiscoveryModel {
         });
     }
 
+    // https://www.ibm.com/watson/developercloud/discovery/api/v1/node.html?node#query
+    query (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
+                if (!params.collection_id) throw new Error('Missing required parameters: collection_id');
+                this.discovery.query(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
 }
+
 
 module.exports = DiscoveryModel;
