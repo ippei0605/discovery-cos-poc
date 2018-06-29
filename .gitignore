@@ -1,3 +1,7 @@
+# Server
+server/public/static
+server/public/index.html
+
 # NPM モジュール
 node_modules
 

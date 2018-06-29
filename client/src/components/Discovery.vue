@@ -4,7 +4,7 @@
     <el-upload
       name="upload-files"
       drag
-      action="http://localhost:6014"
+      :action="baseUrl"
       :on-success="doSuccess"
       :on-progress="doProgress"
 
@@ -17,10 +17,14 @@
 </template>
 
 <script>
+  import context from '@/context';
+
   export default {
     name: 'Discovery',
     data () {
-      return {};
+      return {
+        baseUrl: context.SERVER
+      };
     },
     methods: {
       doSuccess (response, file) {

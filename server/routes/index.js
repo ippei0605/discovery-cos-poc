@@ -37,21 +37,21 @@ discovery.listEnvironments({
         COLLECTION_ID = v[0].collection_id;
     });
 
-
 // ルーターを作成する。
 const router = express.Router();
 module.exports = router;
 
 // ファイルアップロードを設定する。
 const upload = multer({
-    "dest": "upload/"
+    "storage": multer.diskStorage({
+        "destination": (req, file, cb) => {
+            cb(null, 'upload/');
+        },
+        "filename": (req, file, cb) => {
+            cb(null, file.originalname);
+        }
+    })
 });
-
-// Bucket の一覧を表示する。
-router.get('/', (req, res) => {
-    res.sendStatus(500);
-});
-
 
 // Object をアップロードする。
 router.post('/', upload.array('upload-files'), (req, res) => {
@@ -64,7 +64,6 @@ router.post('/', upload.array('upload-files'), (req, res) => {
                 ContentType: item.mimetype
             })
                 .then(v => {
-                    console.log('###', ENVIRONMENT_ID, COLLECTION_ID);
                     return discovery.addDocument({
                         environment_id: ENVIRONMENT_ID,
                         collection_id: COLLECTION_ID,

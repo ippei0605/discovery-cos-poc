@@ -10,6 +10,8 @@
     "login": "ibmcloud login -a https://api.ng.bluemix.net -c 48984e66e3b9b429a0cfe14d0637f075 -o sieg_dev -s survey",
     "service_create": "ibmcloud resource service-instance-create discovery-cos-poc-cos cloud-object-storage lite global && ibmcloud resource service-alias-create discovery-cos-poc-cos-alias --instance-name discovery-cos-poc-cos && ibmcloud service create discovery lite discovery-cos-poc-discovery",
     "service_delete": "ibmcloud service unbind discovery-cos-poc discovery-cos-poc-cos-alias && ibmcloud service unbind discovery-cos-poc discovery-cos-poc-discovery && ibmcloud resource service-alias-delete discovery-cos-poc-cos-alias -f && ibmcloud resource service-instance-delete discovery-cos-poc-cos -f && ibmcloud service delete discovery-cos-poc-discovery -f",
+    "build": "cpx \"../client/dist/**\" ./public",
+    "clean": "rimraf  ./public/static ./public/index.html",
     "push": "ibmcloud app push discovery-cos-poc",
     "postinstall": "node postinstall",
     "start": "node app",
@@ -29,6 +31,8 @@
   },
   "devDependencies": {
     "cfenv-one-liner": "0.0.2",
-    "opener": "^1.4.3"
+    "cpx": "^1.5.0",
+    "opener": "^1.4.3",
+    "rimraf": "^2.6.2"
   }
 }

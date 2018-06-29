@@ -9,3 +9,5 @@ applications:
   services:
   - discovery-cos-poc-cos-alias
   - discovery-cos-poc-discovery
+  env:
+    NODE_ENV: production

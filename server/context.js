@@ -25,9 +25,15 @@ const
 // 環境変数を取得する。
 const appEnv = cfenv.getAppEnv();
 
+// ポートをセットする。無い (ローカル環境の) 場合は 3000 をセットする。
+const port = process.env.PORT || 3000;
+
+// URL を取得する。
+const url = process.env.PORT === undefined ? `http://localhost:${port}` : appEnv.url;
+
 module.exports = {
-    PORT: appEnv.port,
-    URL: appEnv.url,
+    PORT: port,
+    URL: url,
     COS_CREDS: cosCreds,
     DISCOVERY_CREDS: discoveryCreds,
     BUCKET_NAME: BUCKET_NAME,
