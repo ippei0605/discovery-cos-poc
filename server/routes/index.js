@@ -134,3 +134,39 @@ router.post('/:environmentId/:collectionId', upload.array('upload-files'), (req,
         res.json({});
     }
 });
+
+// Object を削除する。
+router.delete('/:environmentId/:collectionId/:documentId', (req, res) => {
+    if (req.files) {
+        return Promise.all(req.files.map(item => {
+            return cos.putObject({
+                Bucket: context.BUCKET_NAME,
+                Key: item.originalname,
+                Body: fs.createReadStream(item.path),
+                ContentType: item.mimetype
+            })
+                .then(v => {
+                    return discovery.addDocument({
+                        environment_id: req.params.environmentId,
+                        collection_id: req.params.collectionId,
+                        file: fs.createReadStream(item.path),
+                        file_content_type: item.mimetype
+                    });
+                })
+                .then(v => {
+                    fs.unlink(item.path, (error) => {
+                    });
+                });
+        }))
+            .then(v => {
+                res.json({});
+            })
+            .catch(e => {
+                console.log('error:', e);
+                res.json({});
+            });
+    } else {
+        res.json({});
+    }
+});
+

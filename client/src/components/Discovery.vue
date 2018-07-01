@@ -16,9 +16,9 @@
     </el-upload>
     <h2>Documents</h2>
     <el-table
+      stripe
       v-loading="loadingTable"
-      :data="result.results"
-      style="width: 100%">
+      :data="result.results">
       <el-table-column type="expand">
         <template slot-scope="props">
           {{ props.row.text }}
@@ -46,6 +46,12 @@
         width="120"
         prop="extracted_metadata.publicationdate"
         label="Publicationdate">
+      </el-table-column>
+      <el-table-column label="Delete" width="60" header-align="center" align="center">
+        <template slot-scope="scope">
+          <el-button size="mini" type="danger" icon="el-icon-delete" circle
+                     @click="deleteDocument(scope.row.id, scope.row.extracted_metadata.filename)"></el-button>
+        </template>
       </el-table-column>
     </el-table>
   </div>
@@ -108,6 +114,9 @@
             console.log('error:', e);
             this.loadingTable = false;
           });
+      },
+      deleteDocument (documentId, filename) {
+        console.log(documentId, filename);
       },
       doSuccess (response, file) {
         console.log('###:', file);
