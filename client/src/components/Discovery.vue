@@ -110,16 +110,34 @@
             <span>Nalural Language Query Result</span>
           </div>
           <div>
-            <p>Passages: {{nlqResult.passages.length}}, Results: {{nlqResult.results.length}}</p>
-            <ul>
-              <li v-for="(item, index) in nlqResult.passages" :key="index" style="margin-top: 20px">
-                <a :href="serverUrl + 'cos/' + nlqResult.resultTable[item.document_id].extracted_metadata.filename"
-                   target="_blank">{{nlqResult.resultTable[item.document_id].extracted_metadata.filename}}</a>
-                (Score: {{item.passage_score}})<br>
-                {{item.passage_text}}
-              </li>
-            </ul>
-            <pre style="margin-top: 40px">{{nlqResult}}</pre>
+            <el-tabs v-model="activeTab">
+              <el-tab-pane label="Passage" name="passage">
+                <div v-if="nlqResult">
+                  <ul>
+                    <li>Passages: {{nlqResult.passages.length}}, Results: {{nlqResult.results.length}}</li>
+                    <li v-for="(item, index) in passageTable" :key="index" style="margin-top: 10px">
+                      <a :href="serverUrl + 'cos/' + documentTable[index].extracted_metadata.filename"
+                         target="_blank">{{documentTable[index].extracted_metadata.filename}}</a>
+                      <ul>
+                        <li v-for="(v, index) in item" :key="index" style="margin-top: 10px">
+                          [Score: {{v.passage_score}}] {{v.passage_text}}}
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="Enrich" name="enrich">
+                <div v-if="nlqResult">
+                  <pre>{{nlqResult}}</pre>
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="JSON (Raw data)" name="json">
+                <div v-if="nlqResult">
+                  <pre>{{nlqResult}}</pre>
+                </div>
+              </el-tab-pane>
+            </el-tabs>
           </div>
         </el-card>
       </el-col>
@@ -145,16 +163,15 @@
         result: {
           results: []
         },
-        nlqResult: {
-          passages: [],
-          results: [],
-          resultTable: {}
-        },
+        nlqResult: null,
+        documentTable: {},
+        passageTable: {},
         form: {
           isNlq: false,
           nlq: '',
           count: 10
-        }
+        },
+        activeTab: 'passage'
       };
     },
     mounted () {
@@ -176,9 +193,17 @@
         context.api(config)
           .then(({data: v}) => {
             this.nlqResult = v;
-            this.nlqResult.resultTable = {};
-            this.nlqResult.results.map(item => {
-              this.nlqResult.resultTable[item.id] = item;
+            this.documentTable = {};
+            v.results.map(item => {
+              this.documentTable[item.id] = item;
+            });
+            this.passageTable = {};
+            v.passages.forEach(item => {
+              if (this.passageTable[item.document_id]) {
+                this.passageTable[item.document_id].push(item);
+              } else {
+                this.passageTable[item.document_id] = [item];
+              }
             });
             this.loadingNlq = false;
           })
