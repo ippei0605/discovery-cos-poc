@@ -134,7 +134,7 @@ router.post('/:environmentId/:collectionId', upload.array('upload-files'), (req,
             })
             .catch(e => {
                 console.log('error:', e);
-                res.json({});
+                res.status(500).send(e);
             });
     } else {
         res.json({});
@@ -162,4 +162,3 @@ router.delete('/:environmentId/:collectionId/:documentId', (req, res) => {
             res.status(500).send(e);
         });
 });
-

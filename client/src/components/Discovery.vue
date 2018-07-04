@@ -44,10 +44,11 @@
               name="upload-files"
               drag
               :action="serverUrl + environmentId + '/' + collectionId"
+              accept=".doc,.docx,.pdf,.html"
               multiple>
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">Drop file here or <em>click to upload</em></div>
-              <div class="el-upload__tip" slot="tip">jpg/png files with a size less than 500kb</div>
+              <div class="el-upload__tip" slot="tip">pdf/doc/docx/html files</div>
             </el-upload>
           </div>
         </el-card>
@@ -135,28 +136,34 @@
                       <a :href="serverUrl + 'cos/' + item.extracted_metadata.filename"
                          target="_blank">{{item.extracted_metadata.filename}}</a>
                       <ul>
-                        <li>Sentiment</li>
-                        <li>
-                          <ul>
-                            <li>{{item.enriched_text.sentiment.document.label}}</li>
-                          </ul>
-                        </li>
-                        <li>Concept</li>
-                        <li>
-                          <ul>
-                            <li v-for="(v, index) in item.enriched_text.concepts" :key="index">
-                              {{v.text}} ({{v.relevance}})
-                            </li>
-                          </ul>
-                        </li>
-                        <li>Category</li>
-                        <li>
-                          <ul>
-                            <li v-for="(v, index) in item.enriched_text.categories" :key="index">
-                              {{v.label}} ({{v.score}})
-                            </li>
-                          </ul>
-                        </li>
+                        <div v-if="item.enriched_text.sentiment">
+                          <li>Sentiment</li>
+                          <li>
+                            <ul>
+                              <li>{{item.enriched_text.sentiment.document.label}}</li>
+                            </ul>
+                          </li>
+                        </div>
+                        <div v-if="item.enriched_text.concepts">
+                          <li>Concept</li>
+                          <li>
+                            <ul>
+                              <li v-for="(v, index) in item.enriched_text.concepts" :key="index">
+                                {{v.text}} ({{v.relevance}})
+                              </li>
+                            </ul>
+                          </li>
+                        </div>
+                        <div v-if="item.enriched_text.categories">
+                          <li>Category</li>
+                          <li>
+                            <ul>
+                              <li v-for="(v, index) in item.enriched_text.categories" :key="index">
+                                {{v.label}} ({{v.score}})
+                              </li>
+                            </ul>
+                          </li>
+                        </div>
                       </ul>
                     </li>
                   </ul>
