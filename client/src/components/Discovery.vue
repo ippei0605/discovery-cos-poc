@@ -136,6 +136,7 @@
                       <a :href="serverUrl + 'cos/' + item.extracted_metadata.filename"
                          target="_blank">{{item.extracted_metadata.filename}}</a>
                       <ul>
+                        <li>[Score: {{item.result_metadata.score}}]</li>
                         <div v-if="item.enriched_text.sentiment">
                           <li>Sentiment</li>
                           <li>
