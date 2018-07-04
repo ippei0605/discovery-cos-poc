@@ -129,7 +129,37 @@
               </el-tab-pane>
               <el-tab-pane label="Enrich" name="enrich">
                 <div v-if="nlqResult">
-                  <pre>{{nlqResult}}</pre>
+                  <ul>
+                    <li>Passages: {{nlqResult.passages.length}}, Results: {{nlqResult.results.length}}</li>
+                    <li v-for="(item, index) in nlqResult.results" :key="index" style="margin-top: 10px">
+                      <a :href="serverUrl + 'cos/' + item.extracted_metadata.filename"
+                         target="_blank">{{item.extracted_metadata.filename}}</a>
+                      <ul>
+                        <li>Sentiment</li>
+                        <li>
+                          <ul>
+                            <li>{{item.enriched_text.sentiment.document.label}}</li>
+                          </ul>
+                        </li>
+                        <li>Concept</li>
+                        <li>
+                          <ul>
+                            <li v-for="(v, index) in item.enriched_text.concepts" :key="index">
+                              {{v.text}} ({{v.relevance}})
+                            </li>
+                          </ul>
+                        </li>
+                        <li>Category</li>
+                        <li>
+                          <ul>
+                            <li v-for="(v, index) in item.enriched_text.categories" :key="index">
+                              {{v.label}} ({{v.score}})
+                            </li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
                 </div>
               </el-tab-pane>
               <el-tab-pane label="JSON (Raw data)" name="json">
@@ -320,7 +350,7 @@
   }
 
   li {
-    display: inline-block;
+    /* display: inline-block; */
     margin: 0 10px;
   }
 
