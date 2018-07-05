@@ -58,64 +58,52 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row v-if="form.isNlq === false">
+    <el-row>
       <el-col style="padding: 5px 5px">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>Documents (Filter)</span>
-          </div>
-          <div>
-            <el-table
-              stripe
-              v-loading="loadingTable"
-              :data="result.results">
-              <el-table-column type="expand">
-                <template slot-scope="props">
-                  {{ props.row.text }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                width="260"
-                prop="id"
-                label="Id">
-              </el-table-column>
-              <el-table-column
-                prop="text"
-                label="text"
-                :formatter="formatText">
-              </el-table-column>
-              <el-table-column
-                prop="extracted_metadata.filename"
-                label="Filename">
-                <template slot-scope="scope">
-                  <a :href="serverUrl + 'cos/' + scope.row.extracted_metadata.filename"
-                     target="_blank">{{scope.row.extracted_metadata.filename}}</a>
-                </template>
-              </el-table-column>
-              <el-table-column
-                width="120"
-                prop="extracted_metadata.publicationdate"
-                label="Publicationdate">
-              </el-table-column>
-              <el-table-column label="Delete" width="60" header-align="center" align="center">
-                <template slot-scope="scope">
-                  <el-button size="mini" type="danger" icon="el-icon-delete" circle
-                             @click="deleteDocument(scope.row.id, scope.row.extracted_metadata.filename)"></el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-row v-if="form.isNlq === true">
-      <el-col style="padding: 5px 5px">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>Nalural Language Query Result</span>
-          </div>
           <div>
             <el-tabs v-model="activeTab">
+              <el-tab-pane label="All documents (Filter)" name="filter">
+                <el-table
+                  stripe
+                  v-loading="loadingTable"
+                  :data="result.results">
+                  <el-table-column type="expand">
+                    <template slot-scope="props">
+                      {{ props.row.text }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    width="260"
+                    prop="id"
+                    label="Id">
+                  </el-table-column>
+                  <el-table-column
+                    prop="text"
+                    label="text"
+                    :formatter="formatText">
+                  </el-table-column>
+                  <el-table-column
+                    prop="extracted_metadata.filename"
+                    label="Filename">
+                    <template slot-scope="scope">
+                      <a :href="serverUrl + 'cos/' + scope.row.extracted_metadata.filename"
+                         target="_blank">{{scope.row.extracted_metadata.filename}}</a>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    width="120"
+                    prop="extracted_metadata.publicationdate"
+                    label="Publicationdate">
+                  </el-table-column>
+                  <el-table-column label="Delete" width="60" header-align="center" align="center">
+                    <template slot-scope="scope">
+                      <el-button size="mini" type="danger" icon="el-icon-delete" circle
+                                 @click="deleteDocument(scope.row.id, scope.row.extracted_metadata.filename)"></el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-tab-pane>
               <el-tab-pane label="Passage" name="passage">
                 <div v-if="nlqResult">
                   <ul>
@@ -214,7 +202,7 @@
           count: 10,
           passages_count: 10
         },
-        activeTab: 'passage'
+        activeTab: 'filter'
       };
     },
     mounted () {
@@ -245,6 +233,7 @@
               }
             });
             this.loadingNlq = false;
+            this.activeTab = 'passage';
           })
           .catch(e => {
             console.log('error:', e);
