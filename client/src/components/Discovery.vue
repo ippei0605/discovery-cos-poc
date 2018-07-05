@@ -17,15 +17,19 @@
             label="Value">
           </el-table-column>
         </el-table>
-        <div style="margin-top: 40px; text-align: center">
+        <div style="margin-top: 20px; text-align: center">
           <el-form size="medium" :inline="true" :model="form">
-            <el-form-item>
-              <el-input placeholder="Please input natural language query" v-model="form.nlq" style="min-width: 400px;
-    max-width: 400px;"></el-input>
+            <el-form-item label="Count">
+              <el-input-number v-model="form.count" :min="1" :max="1000" style="min-width: 130px;
+    max-width: 130px;"></el-input-number>
+            </el-form-item>
+            <el-form-item label="Passage count">
+              <el-input-number v-model="form.passages_count" :min="1" :max="1000" style="min-width: 130px;
+    max-width: 130px;"></el-input-number>
             </el-form-item>
             <el-form-item>
-              <el-input-number v-model="form.count" :min="1" :max="1000" style="min-width: 140px;
-    max-width: 140px;"></el-input-number>
+              <el-input placeholder="Please input natural language query" v-model="form.nlq" style="min-width: 450px;
+    max-width: 400px;"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="nlquery" :loading="loadingNlq">Search</el-button>
@@ -35,7 +39,7 @@
         </div>
       </el-col>
       <el-col :span="10" style="padding: 5px 5px">
-        <el-card class="box-card">
+        <el-card class="box-card" style="margin-top: 20px">
           <div slot="header" class="clearfix">
             <span>Upload documents</span>
           </div>
@@ -207,7 +211,8 @@
         form: {
           isNlq: false,
           nlq: '',
-          count: 10
+          count: 10,
+          passages_count: 10
         },
         activeTab: 'passage'
       };
@@ -222,11 +227,7 @@
         const config = {
           method: 'get',
           url: `/${this.environmentId}/${this.collectionId}`,
-          params: {
-            nlq: this.form.nlq,
-            passages: true,
-            count: this.form.count
-          }
+          params: this.form
         };
         context.api(config)
           .then(({data: v}) => {
@@ -254,7 +255,8 @@
         this.form = {
           isNlq: false,
           nlq: '',
-          count: 10
+          count: 10,
+          passages_count: 10
         };
       },
       formatText (row, column) {

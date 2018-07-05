@@ -85,17 +85,21 @@ router.get('/cos/:key', (req, res) => {
 
 // Query を実行する。
 router.get('/:environmentId/:collectionId', (req, res) => {
-    const count = req.query.count ? req.query.count : 10;
-    const filter = req.query.filter === undefined ? undefined : req.query.filter;
-    const nlq = req.query.nlq === undefined ? undefined : req.query.nlq;
-    const passages = req.query.passages === 'true' ? true : undefined;
+    const
+        count = req.query.count ? req.query.count : 10,
+        filter = req.query.filter === undefined ? undefined : req.query.filter,
+        nlq = req.query.nlq === undefined ? undefined : req.query.nlq,
+        passages = req.query.passages === 'true' ? true : undefined,
+        passages_count = req.query.passages_count ? req.query.passages_count : 10;
+
     discovery.query({
         environment_id: req.params.environmentId,
         collection_id: req.params.collectionId,
         filter: filter,
         natural_language_query: nlq,
         passages: passages,
-        count: count
+        count: count,
+        passages_count: passages_count
     })
         .then(v => {
             res.json(v);
