@@ -65,7 +65,6 @@ router.get('/ready', (req, res) => {
 
 // Object を表示する。
 router.get('/cos/:key', (req, res) => {
-    console.log(req.params.key);
     const
         bucket = context.BUCKET_NAME,
         key = req.params.key;
@@ -89,17 +88,19 @@ router.get('/:environmentId/:collectionId', (req, res) => {
         count = req.query.count ? req.query.count : 10,
         filter = req.query.filter === undefined ? undefined : req.query.filter,
         nlq = req.query.nlq === undefined ? undefined : req.query.nlq,
+        highlight = req.query.highlight === 'true' ? true : undefined,
         passages = req.query.passages === 'true' ? true : undefined,
-        passages_count = req.query.passages_count ? req.query.passages_count : 10;
+        passages_count = passages && req.query.passages_count ? req.query.passages_count : undefined;
 
     discovery.query({
         environment_id: req.params.environmentId,
         collection_id: req.params.collectionId,
         filter: filter,
         natural_language_query: nlq,
-        passages: passages,
         count: count,
-        passages_count: passages_count
+        passages: passages,
+        passages_count: passages_count,
+        highlight: highlight
     })
         .then(v => {
             res.json(v);

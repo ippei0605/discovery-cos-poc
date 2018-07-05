@@ -19,12 +19,16 @@
         </el-table>
         <div style="margin-top: 20px; text-align: center">
           <el-form size="medium" :inline="true" :model="form">
+            <el-form-item>
+              <el-checkbox v-model="form.highlight">Highlight</el-checkbox>
+            </el-form-item>
+            <el-form-item>
+              <el-checkbox v-model="form.passages">Passage</el-checkbox>
+              <el-input-number v-model="form.passages_count" :disabled="!form.passages" :min="1" :max="1000"
+                               style="margin-left: 10px; min-width: 130px; max-width: 130px;"></el-input-number>
+            </el-form-item>
             <el-form-item label="Count">
               <el-input-number v-model="form.count" :min="1" :max="1000" style="min-width: 130px;
-    max-width: 130px;"></el-input-number>
-            </el-form-item>
-            <el-form-item label="Passage count">
-              <el-input-number v-model="form.passages_count" :min="1" :max="1000" style="min-width: 130px;
     max-width: 130px;"></el-input-number>
             </el-form-item>
             <el-form-item>
@@ -104,10 +108,15 @@
                   </el-table-column>
                 </el-table>
               </el-tab-pane>
-              <el-tab-pane label="Passage" name="passage">
+              <el-tab-pane label="JSON (Raw data)" name="json">
                 <div v-if="nlqResult">
+                  <pre>{{nlqResult}}</pre>
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="Passage" name="passage">
+                <div v-if="nlqResult && nlqResult.passages">
                   <ul>
-                    <li>Passages: {{nlqResult.passages.length}}, Results: {{nlqResult.results.length}}</li>
+                    <li>Passages: {{nlqResult.passages.length}}</li>
                     <li v-for="(item, index) in passageTable" :key="index" style="margin-top: 10px">
                       <a :href="serverUrl + 'cos/' + documentTable[index].extracted_metadata.filename"
                          target="_blank">{{documentTable[index].extracted_metadata.filename}}</a>
@@ -120,15 +129,25 @@
                   </ul>
                 </div>
               </el-tab-pane>
-              <el-tab-pane label="Enrich" name="enrich">
-                <div v-if="nlqResult">
+              <el-tab-pane label="Result" name="result">
+                <div v-if="nlqResult && nlqResult.results">
                   <ul>
-                    <li>Passages: {{nlqResult.passages.length}}, Results: {{nlqResult.results.length}}</li>
+                    <li>Results: {{nlqResult.results.length}}</li>
                     <li v-for="(item, index) in nlqResult.results" :key="index" style="margin-top: 10px">
                       <a :href="serverUrl + 'cos/' + item.extracted_metadata.filename"
                          target="_blank">{{item.extracted_metadata.filename}}</a>
                       <ul>
                         <li>[Score: {{item.result_metadata.score}}]</li>
+                        <div v-if="item.highlight">
+                          <li>Highlight</li>
+                          <li>
+                            <ul>
+                              <li v-for="(v, index) in item.highlight.text" :key="index">
+                                <span v-html="v"></span>
+                              </li>
+                            </ul>
+                          </li>
+                        </div>
                         <div v-if="item.enriched_text.sentiment">
                           <li>Sentiment</li>
                           <li>
@@ -162,11 +181,6 @@
                   </ul>
                 </div>
               </el-tab-pane>
-              <el-tab-pane label="JSON (Raw data)" name="json">
-                <div v-if="nlqResult">
-                  <pre>{{nlqResult}}</pre>
-                </div>
-              </el-tab-pane>
             </el-tabs>
           </div>
         </el-card>
@@ -197,10 +211,11 @@
         documentTable: {},
         passageTable: {},
         form: {
-          isNlq: false,
           nlq: '',
           count: 10,
-          passages_count: 10
+          passages_count: 10,
+          passages: false,
+          highlight: false
         },
         activeTab: 'filter'
       };
@@ -210,7 +225,6 @@
     },
     methods: {
       nlquery () {
-        this.form.isNlq = true;
         this.loadingNlq = true;
         const config = {
           method: 'get',
@@ -224,16 +238,18 @@
             v.results.map(item => {
               this.documentTable[item.id] = item;
             });
-            this.passageTable = {};
-            v.passages.forEach(item => {
-              if (this.passageTable[item.document_id]) {
-                this.passageTable[item.document_id].push(item);
-              } else {
-                this.passageTable[item.document_id] = [item];
-              }
-            });
+            if (v.passages) {
+              this.passageTable = {};
+              v.passages.forEach(item => {
+                if (this.passageTable[item.document_id]) {
+                  this.passageTable[item.document_id].push(item);
+                } else {
+                  this.passageTable[item.document_id] = [item];
+                }
+              });
+            }
             this.loadingNlq = false;
-            this.activeTab = 'passage';
+            this.activeTab = 'json';
           })
           .catch(e => {
             console.log('error:', e);
@@ -242,10 +258,11 @@
       },
       reset () {
         this.form = {
-          isNlq: false,
           nlq: '',
           count: 10,
-          passages_count: 10
+          passages_count: 10,
+          passages: false,
+          highlight: false
         };
       },
       formatText (row, column) {
@@ -355,11 +372,5 @@
 
   a {
     color: #42b983;
-  }
-
-  .col-text {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 </style>
