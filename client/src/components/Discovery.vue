@@ -135,7 +135,7 @@
                     <li>Results: {{nlqResult.results.length}}</li>
                     <li v-for="(item, index) in nlqResult.results" :key="index" style="margin-top: 10px">
                       <a
-                        :href="highlightTable[item.id] && item.extracted_metadata.filename.indexOf('.pdf') !== -1 ? serverUrl + 'cos/' + item.extracted_metadata.filename + '#search=' + highlightTable[item.id] : serverUrl + 'cos/' + item.extracted_metadata.filename"
+                        :href="highlightTable[item.id] && item.extracted_metadata.file_type === 'pdf' ? serverUrl + 'cos/' + item.extracted_metadata.filename + '#search=' + highlightTable[item.id] : serverUrl + 'cos/' + item.extracted_metadata.filename"
                         target="_blank">{{item.extracted_metadata.filename}}</a>
                       <ul>
                         <li>[Score: {{item.result_metadata.score}}]</li>
