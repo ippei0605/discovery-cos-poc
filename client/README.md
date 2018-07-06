@@ -1,6 +1,6 @@
-# client
+# Client
 
-> A Vue.js project
+> Discovery COS PoC Client
 
 ## Build Setup
 

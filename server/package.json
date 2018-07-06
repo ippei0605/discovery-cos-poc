@@ -2,6 +2,7 @@
   "name": "discovery-cos-poc-server",
   "version": "0.0.1",
   "description": "Discovery COS PoC Server",
+  "author": "Ippei SUZUKI",
   "private": true,
   "engines": {
     "node": "8.9.4"
