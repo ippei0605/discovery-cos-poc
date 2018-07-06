@@ -134,8 +134,9 @@
                   <ul>
                     <li>Results: {{nlqResult.results.length}}</li>
                     <li v-for="(item, index) in nlqResult.results" :key="index" style="margin-top: 10px">
-                      <a :href="serverUrl + 'cos/' + item.extracted_metadata.filename"
-                         target="_blank">{{item.extracted_metadata.filename}}</a>
+                      <a
+                        :href="highlightTable[item.id] && item.extracted_metadata.filename.indexOf('.pdf') !== -1 ? serverUrl + 'cos/' + item.extracted_metadata.filename + '#search=' + highlightTable[item.id] : serverUrl + 'cos/' + item.extracted_metadata.filename"
+                        target="_blank">{{item.extracted_metadata.filename}}</a>
                       <ul>
                         <li>[Score: {{item.result_metadata.score}}]</li>
                         <div v-if="item.highlight">
@@ -210,6 +211,7 @@
         nlqResult: null,
         documentTable: {},
         passageTable: {},
+        highlightTable: {},
         form: {
           nlq: '',
           count: 10,
@@ -235,8 +237,18 @@
           .then(({data: v}) => {
             this.nlqResult = v;
             this.documentTable = {};
-            v.results.map(item => {
+            this.highlightTable = {};
+            v.results.forEach(item => {
               this.documentTable[item.id] = item;
+              if (item.highlight && item.highlight.text) {
+                for (const text of item.highlight.text) {
+                  const keyword = text.match(/<em>(.*?)<\/em>/);
+                  if (keyword[1]) {
+                    this.highlightTable[item.id] = keyword[1];
+                    break;
+                  }
+                }
+              }
             });
             if (v.passages) {
               this.passageTable = {};
