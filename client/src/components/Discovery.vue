@@ -135,7 +135,7 @@
                     <li>Results: {{nlqResult.results.length}}</li>
                     <li v-for="(item, index) in nlqResult.results" :key="index" style="margin-top: 10px">
                       <a
-                        :href="highlightTable[item.id] && item.extracted_metadata.file_type === 'pdf' ? serverUrl + 'cos/' + item.extracted_metadata.filename + '#search=' + highlightTable[item.id] : serverUrl + 'cos/' + item.extracted_metadata.filename"
+                        :href="serverUrl + 'cos/' + item.extracted_metadata.filename + getSearchPdf(highlightTable[item.id], item.extracted_metadata.file_type)"
                         target="_blank">{{item.extracted_metadata.filename}}</a>
                       <ul>
                         <li>[Score: {{item.result_metadata.score}}]</li>
@@ -226,6 +226,13 @@
       this.init();
     },
     methods: {
+      getSearchPdf (highlight, fileType) {
+        let searchPdf = '';
+        if (highlight && fileType === 'pdf') {
+          searchPdf = `#search="${highlight}"`;
+        }
+        return searchPdf;
+      },
       nlquery () {
         this.loadingNlq = true;
         const config = {
@@ -241,13 +248,17 @@
             v.results.forEach(item => {
               this.documentTable[item.id] = item;
               if (item.highlight && item.highlight.text) {
+                const temp = [];
                 for (const text of item.highlight.text) {
-                  const keyword = text.match(/<em>(.*?)<\/em>/);
+                  const keyword = text.match(/<em>(.*?)<\/em>/g);
                   if (keyword[1]) {
-                    this.highlightTable[item.id] = keyword[1];
-                    break;
+                    temp.push(keyword[1]);
                   }
                 }
+                console.log('####', temp);
+                this.highlightTable[item.id] = temp.filter((x, i, self) => {
+                  return self.indexOf(x) === i;
+                }).join(' ');
               }
             });
             if (v.passages) {
