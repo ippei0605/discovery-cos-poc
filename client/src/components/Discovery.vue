@@ -134,9 +134,7 @@
                   <ul>
                     <li>Results: {{nlqResult.results.length}}</li>
                     <li v-for="(item, index) in nlqResult.results" :key="index" style="margin-top: 10px">
-                      <a
-                        :href="serverUrl + 'cos/' + item.extracted_metadata.filename + getSearchPdf(highlightTable[item.id], item.extracted_metadata.file_type)"
-                        target="_blank">{{item.extracted_metadata.filename}}</a>
+                      <a :href="getUrl(item)" target="_blank">{{item.extracted_metadata.filename}}</a>
                       <ul>
                         <li>[Score: {{item.result_metadata.score}}]</li>
                         <div v-if="item.highlight">
@@ -226,12 +224,12 @@
       this.init();
     },
     methods: {
-      getSearchPdf (highlight, fileType) {
-        let searchPdf = '';
-        if (highlight && fileType === 'pdf') {
-          searchPdf = `#search="${highlight}"`;
+      getUrl (document) {
+        let url = `${this.serverUrl}cos/${document.extracted_metadata.filename}`;
+        if (this.highlightTable[document.id] && document.extracted_metadata.file_type === 'pdf') {
+          url += `#search="${this.highlightTable[document.id]}"`;
         }
-        return searchPdf;
+        return url;
       },
       nlquery () {
         this.loadingNlq = true;
@@ -250,12 +248,11 @@
               if (item.highlight && item.highlight.text) {
                 const temp = [];
                 for (const text of item.highlight.text) {
-                  const keyword = text.match(/<em>(.*?)<\/em>/g);
-                  if (keyword[1]) {
-                    temp.push(keyword[1]);
-                  }
+                  const keyword = text.match(/<em>.*?<\/em>/g);
+                  keyword.forEach(item => {
+                    temp.push(item.replace(/<[/]?em>/g, ''));
+                  });
                 }
-                console.log('####', temp);
                 this.highlightTable[item.id] = temp.filter((x, i, self) => {
                   return self.indexOf(x) === i;
                 }).join(' ');

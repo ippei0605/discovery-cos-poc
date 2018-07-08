@@ -19,6 +19,10 @@ https://discovery-cos-poc.mybluemix.net/
 * 作成中
 
 
+
+## 参考
+* http://regex-testdrive.com/ja/
+
 ## おまけ
 久々なので、 vlu-cli の手順を記録しておきます。
 vlu-cli を更新します。
