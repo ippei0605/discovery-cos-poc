@@ -217,16 +217,7 @@
           passages: false,
           highlight: false
         },
-        activeTab: 'filter',
-        kangxiToCjkTable: {
-          '一': '一',
-          '⽅': '方',
-          '改': '改',
-          '⾰': '革',
-          '⾃': '自',
-          '由': '由',
-          '⾼': '高'
-        }
+        activeTab: 'filter'
       };
     },
     mounted () {
@@ -241,8 +232,17 @@
         return url;
       },
       kangxiToCjk (text) {
-        for (const key in this.kangxiToCjkTable) {
-          text = text.replace(new RegExp(key, 'g'), this.kangxiToCjkTable[key]);
+        const table = {
+          '一': '一',
+          '⽅': '方',
+          '改': '改',
+          '⾰': '革',
+          '⾃': '自',
+          '由': '由',
+          '⾼': '高'
+        };
+        for (const key in table) {
+          text = text.replace(new RegExp(key, 'g'), table[key]);
         }
         return text;
       },
