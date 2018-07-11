@@ -217,7 +217,16 @@
           passages: false,
           highlight: false
         },
-        activeTab: 'filter'
+        activeTab: 'filter',
+        kangxiToCjkTable: {
+          '一': '一',
+          '⽅': '方',
+          '改': '改',
+          '⾰': '革',
+          '⾃': '自',
+          '由': '由',
+          '⾼': '高'
+        }
       };
     },
     mounted () {
@@ -230,6 +239,12 @@
           url += `#search="${this.highlightTable[document.id]}"`;
         }
         return url;
+      },
+      kangxiToCjk (text) {
+        for (const key in this.kangxiToCjkTable) {
+          text = text.replace(new RegExp(key, 'g'), this.kangxiToCjkTable[key]);
+        }
+        return text;
       },
       nlquery () {
         this.loadingNlq = true;
@@ -250,7 +265,7 @@
                 for (const text of item.highlight.text) {
                   const keyword = text.match(/<em>.*?<\/em>/g);
                   keyword.forEach(item => {
-                    temp.push(item.replace(/<[/]?em>/g, ''));
+                    temp.push(this.kangxiToCjk(item.replace(/<[/]?em>/g, '')));
                   });
                 }
                 this.highlightTable[item.id] = temp.filter((x, i, self) => {
