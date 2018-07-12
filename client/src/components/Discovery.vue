@@ -211,6 +211,12 @@
                     stripe
                     v-loading="loadingTrainingData"
                     :data="trainingData.queries">
+                    <el-table-column
+                      type="index"
+                      header-align="left"
+                      align="right"
+                      width="50">
+                    </el-table-column>
                     <el-table-column type="expand">
                       <template slot-scope="props">
                         {{props.row.examples}}
@@ -314,6 +320,7 @@
                 title: 'Success',
                 message: 'トレーニングデータを追加しました。'
               });
+              this.listTrainingData();
             })
             .catch(e => {
               let message = 'トレーニングデータを追加できませんでした。';
