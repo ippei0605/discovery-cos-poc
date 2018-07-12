@@ -180,6 +180,67 @@
                   </ul>
                 </div>
               </el-tab-pane>
+              <el-tab-pane label="New Training Data" name="new_training_data">
+                <div v-if="nlqResult && nlqResult.results">
+                  <el-form size="medium" :model="TrainingForm" label-width="180px">
+                    <el-form-item label="Natural Language Query">
+                      <el-input v-model="TrainingForm.nlq"></el-input>
+                    </el-form-item>
+                    <p style="margin-left: 20px">
+                      <i class="el-icon-info" style="margin-right: 10px"></i>
+                      各文書の妥当性 (relevance) を 0 から 100 に設定してください。</p>
+                    <ol>
+                      <li v-for="(item, index) in nlqResult.results" :key="index" style="margin-top: 10px">
+                        <a :href="getUrl(item)" target="_blank">{{item.extracted_metadata.filename}}</a>
+                        <el-input-number v-model="TrainingForm.examples[index].relevance"
+                                         size="mini" :min="0" :max="100"
+                                         style="min-width: 130px; max-width: 130px;float: right;"></el-input-number>
+                      </li>
+                    </ol>
+                    <el-form-item style="margin-top:20px; float: right">
+                      <el-button type="warning" icon="el-icon-edit" @click="addTrainingData" :loading="loadingNlq">Add
+                      </el-button>
+                      <el-button type="text" @click="resetTrainingForm">Reset</el-button>
+                    </el-form-item>
+                  </el-form>
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="Training Data" name="training_data">
+                <div v-loading="loadingTrainingData">
+                  <el-table
+                    stripe
+                    v-loading="loadingTrainingData"
+                    :data="trainingData.queries">
+                    <el-table-column type="expand">
+                      <template slot-scope="props">
+                        {{props.row.examples}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      prop="query_id"
+                      label="Id">
+                    </el-table-column>
+                    <el-table-column
+                      prop="natural_language_query"
+                      label="Natural Language Query">
+                    </el-table-column>
+                    <el-table-column
+                      prop="filter"
+                      label="Filter">
+                    </el-table-column>
+                    <el-table-column
+                      prop="updated"
+                      label="Updated">
+                    </el-table-column>
+                    <el-table-column label="Delete" width="60" header-align="center" align="center">
+                      <template slot-scope="scope">
+                        <el-button size="mini" type="danger" icon="el-icon-delete" circle
+                                   @click="deleteTrainingData(scope.row.query_id)"></el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </el-tab-pane>
             </el-tabs>
           </div>
         </el-card>
@@ -198,6 +259,7 @@
       return {
         loading: false,
         loadingTable: false,
+        loadingTrainingData: false,
         loadingNlq: false,
         serverUrl: context.serverUrl,
         environmentId: '',
@@ -217,13 +279,69 @@
           passages: false,
           highlight: false
         },
-        activeTab: 'filter'
+        TrainingForm: {
+          nlq: '',
+          examples: []
+        },
+        activeTab: 'filter',
+        trainingData: {}
       };
     },
     mounted () {
       this.init();
     },
     methods: {
+      addTrainingData () {
+        this.$confirm('トレーニングデータを追加します。よろしいですか？', 'Warning', {
+          confirmButtonText: 'OK',
+          cancelBfuttonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          const config = {
+            method: 'post',
+            url: `/${this.environmentId}/${this.collectionId}/train`,
+            data: qs.stringify({
+              natural_language_query: this.TrainingForm.nlq,
+              examples: this.TrainingForm.examples
+            }),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+          };
+          context.api(config)
+            .then(({data: v}) => {
+              this.$notify.success({
+                title: 'Success',
+                message: 'トレーニングデータを追加しました。'
+              });
+            })
+            .catch(e => {
+              let message = 'トレーニングデータを追加できませんでした。';
+              if (e.response.status === 409) {
+                message = 'トレーニングデータが競合するため追加できませんでした。';
+              }
+              console.log('error:', e);
+              this.$notify.error({
+                title: 'Error',
+                message: message,
+                duration: 0
+              });
+            });
+        }).catch(() => {
+        });
+      },
+      resetTrainingForm () {
+        const examples = this.nlqResult.results.map(item => {
+          return {
+            document_id: item.id,
+            relevance: 1
+          };
+        });
+        this.TrainingForm = {
+          nlq: this.form.nlq,
+          examples: examples
+        };
+      },
       getUrl (document) {
         let url = `${this.serverUrl}cos/${document.extracted_metadata.filename}`;
         if (this.highlightTable[document.id] && document.extracted_metadata.file_type === 'pdf') {
@@ -283,8 +401,9 @@
                 }
               });
             }
+            this.resetTrainingForm();
             this.loadingNlq = false;
-            this.activeTab = 'json';
+            if (this.activeTab === 'filter') this.activeTab = 'json';
           })
           .catch(e => {
             console.log('error:', e);
@@ -325,11 +444,28 @@
               }
             ];
             this.list();
+            this.listTrainingData();
             this.loading = false;
           })
           .catch(e => {
             console.log('error:', e);
             this.loading = false;
+          });
+      },
+      listTrainingData () {
+        this.loadingTrainingData = true;
+        const config = {
+          method: 'get',
+          url: `/${this.environmentId}/${this.collectionId}/train`
+        };
+        context.api(config)
+          .then(({data: v}) => {
+            this.trainingData = v;
+            this.loadingTrainingData = false;
+          })
+          .catch(e => {
+            console.log('error:', e);
+            this.loadingTrainingData = false;
           });
       },
       list () {
@@ -351,6 +487,38 @@
             console.log('error:', e);
             this.loadingTable = false;
           });
+      },
+      deleteTrainingData (queryId) {
+        this.$confirm('トレーニングデータを削除します。よろしいですか？', 'Warning', {
+          confirmButtonText: 'OK',
+          cancelBfuttonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          const config = {
+            method: 'delete',
+            url: `/${this.environmentId}/${this.collectionId}/train/${queryId}`,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+          };
+          context.api(config)
+            .then(({data: v}) => {
+              this.$notify.success({
+                title: 'Success',
+                message: 'トレーニングデータを削除しました。'
+              });
+              this.listTrainingData();
+            })
+            .catch(e => {
+              console.log('error:', e);
+              this.$notify.error({
+                title: 'Error',
+                message: 'トレーニングデータを削除できませんでした。',
+                duration: 0
+              });
+            });
+        }).catch(() => {
+        });
       },
       deleteDocument (documentId, filename) {
         this.$confirm('Are you sure you want to delete this document ?', 'Warning', {

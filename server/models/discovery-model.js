@@ -225,7 +225,69 @@ class DiscoveryModel {
         });
     }
 
-}
+    // https://www.ibm.com/watson/developercloud/discovery/api/v1/node.html?node#list-training-data
+    listTrainingData (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
+                if (!params.collection_id) throw new Error('Missing required parameters: collection_id');
+                this.discovery.listTrainingData(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
 
+    // https://www.ibm.com/watson/developercloud/discovery/api/v1/node.html?node#add-training-data
+    addTrainingData (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
+                if (!params.collection_id) throw new Error('Missing required parameters: collection_id');
+                this.discovery.addTrainingData(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    // https://www.ibm.com/watson/developercloud/discovery/api/v1/node.html?node#delete-training-data
+    deleteTrainingData (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!params.environment_id) throw new Error('Missing required parameters: environment_id');
+                if (!params.collection_id) throw new Error('Missing required parameters: collection_id');
+                if (!params.query_id) throw new Error('Missing required parameters: query_id');
+                this.discovery.deleteTrainingData(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+}
 
 module.exports = DiscoveryModel;

@@ -167,3 +167,55 @@ router.delete('/:environmentId/:collectionId/:documentId', (req, res) => {
             res.status(500).send(e);
         });
 });
+
+// トレーニングデータを追加する。
+router.post('/:environmentId/:collectionId/train', (req, res) => {
+    discovery.addTrainingData({
+        environment_id: req.params.environmentId,
+        collection_id: req.params.collectionId,
+        natural_language_query: req.body.natural_language_query,
+        examples: req.body.examples
+    })
+        .then(v => {
+            res.json(v);
+        })
+        .catch(e => {
+            console.log('error:', e);
+            if (e.code) {
+                res.sendStatus(e.code);
+            } else {
+                res.sendStatus(500);
+            }
+        });
+});
+
+// トレーニングデータを追加する。
+router.get('/:environmentId/:collectionId/train', (req, res) => {
+    discovery.listTrainingData({
+        environment_id: req.params.environmentId,
+        collection_id: req.params.collectionId,
+    })
+        .then(v => {
+            res.json(v);
+        })
+        .catch(e => {
+            console.log('error:', e);
+            res.sendStatus(500);
+        });
+});
+
+// トレーニングデータを削除する。
+router.delete('/:environmentId/:collectionId/train/:queryId', (req, res) => {
+    discovery.deleteTrainingData({
+        environment_id: req.params.environmentId,
+        collection_id: req.params.collectionId,
+        query_id: req.params.queryId
+    })
+        .then(v => {
+            res.json(v);
+        })
+        .catch(e => {
+            console.log('error:', e);
+            res.sendStatus(500);
+        });
+});
