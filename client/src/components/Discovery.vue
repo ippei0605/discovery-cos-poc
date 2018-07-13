@@ -219,12 +219,38 @@
                     </el-table-column>
                     <el-table-column type="expand">
                       <template slot-scope="props">
-                        {{props.row.examples}}
+                        <p>Examples:<br>
+                          {{props.row.examples}}</p>
+                        <p v-if="props.row.notices">Notices:<br>
+                          {{props.row.notices}}</p>
                       </template>
                     </el-table-column>
                     <el-table-column
                       prop="query_id"
                       label="Id">
+                    </el-table-column>
+                    <el-table-column
+                      prop="notices"
+                      label="Notice"
+                      header-align="left"
+                      align="center"
+                      width="70">
+                      <template slot-scope="props">
+                        <div v-if="props.row.notices">
+                          <el-popover trigger="hover" placement="top">
+                            <ol style="font-size: 10px">
+                              <li v-for="(item, index) in props.row.notices" :key="index">
+                                {{item.description}}
+                              </li>
+                            </ol>
+                            <div slot="reference">
+                              <el-tag :type="getNoticeType(props.row.notices)"
+                                      size="small">{{props.row.notices.length}}
+                              </el-tag>
+                            </div>
+                          </el-popover>
+                        </div>
+                      </template>
                     </el-table-column>
                     <el-table-column
                       prop="natural_language_query"
@@ -247,6 +273,11 @@
                   </el-table>
                 </div>
               </el-tab-pane>
+              <el-tab-pane label="Notice" name="notice">
+                <div v-loading="loadingNotices">
+                  <pre>{{notices}}</pre>
+                </div>
+              </el-tab-pane>
             </el-tabs>
           </div>
         </el-card>
@@ -266,6 +297,7 @@
         loading: false,
         loadingTable: false,
         loadingTrainingData: false,
+        loadingNotices: false,
         loadingNlq: false,
         serverUrl: context.serverUrl,
         environmentId: '',
@@ -290,13 +322,26 @@
           examples: []
         },
         activeTab: 'filter',
-        trainingData: {}
+        trainingData: {},
+        notices: {}
       };
     },
     mounted () {
       this.init();
     },
     methods: {
+      getNoticeType (notices) {
+        let noticeType = 'info';
+        for (const item of notices) {
+          if (item.severity === 'error') {
+            noticeType = 'error';
+            break;
+          } else if (item.severity === 'warning') {
+            noticeType = 'warning';
+          }
+        }
+        return noticeType;
+      },
       addTrainingData () {
         this.$confirm('トレーニングデータを追加します。よろしいですか？', 'Warning', {
           confirmButtonText: 'OK',
@@ -452,11 +497,31 @@
             ];
             this.list();
             this.listTrainingData();
+            this.queryNotices();
             this.loading = false;
           })
           .catch(e => {
             console.log('error:', e);
             this.loading = false;
+          });
+      },
+      queryNotices () {
+        this.loadingNotices = true;
+        const config = {
+          method: 'get',
+          url: `/${this.environmentId}/${this.collectionId}/notices`,
+          params: {
+            count: 1000
+          }
+        };
+        context.api(config)
+          .then(({data: v}) => {
+            this.notices = v;
+            this.loadingNotices = false;
+          })
+          .catch(e => {
+            console.log('error:', e);
+            this.loadingNotices = false;
           });
       },
       listTrainingData () {

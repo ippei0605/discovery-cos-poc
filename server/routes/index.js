@@ -189,14 +189,40 @@ router.post('/:environmentId/:collectionId/train', (req, res) => {
         });
 });
 
-// トレーニングデータを追加する。
+// トレーニングデータ一覧を表示する。
 router.get('/:environmentId/:collectionId/train', (req, res) => {
+    let temp = {};
     discovery.listTrainingData({
         environment_id: req.params.environmentId,
         collection_id: req.params.collectionId,
     })
         .then(v => {
-            res.json(v);
+            temp = v;
+            return discovery.queryNotices({
+                environment_id: req.params.environmentId,
+                collection_id: req.params.collectionId,
+                count: 1000
+            });
+        })
+        .then(({results: v}) => {
+            const noticeTable = {};
+            v.forEach(row => {
+                row.notices.forEach(item => {
+                    if (item.query_id) {
+                        if (noticeTable[item.query_id]) {
+                            noticeTable[item.query_id].push(item);
+                        } else {
+                            noticeTable[item.query_id] = [item];
+                        }
+                    }
+                });
+            });
+            const queries = temp.queries.map(item => {
+                item.notices = noticeTable[item.query_id];
+                return item;
+            });
+            temp.queries = queries;
+            res.json(temp);
         })
         .catch(e => {
             console.log('error:', e);
@@ -210,6 +236,23 @@ router.delete('/:environmentId/:collectionId/train/:queryId', (req, res) => {
         environment_id: req.params.environmentId,
         collection_id: req.params.collectionId,
         query_id: req.params.queryId
+    })
+        .then(v => {
+            res.json(v);
+        })
+        .catch(e => {
+            console.log('error:', e);
+            res.sendStatus(500);
+        });
+});
+
+// queryNotices を実行する。
+router.get('/:environmentId/:collectionId/notices', (req, res) => {
+    const count = req.query.count ? req.query.count : 10;
+    discovery.queryNotices({
+        environment_id: req.params.environmentId,
+        collection_id: req.params.collectionId,
+        count: count
     })
         .then(v => {
             res.json(v);
