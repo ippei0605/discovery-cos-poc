@@ -91,7 +91,7 @@ router.get('/:environmentId/:collectionId', (req, res) => {
         highlight = req.query.highlight === 'true' ? true : undefined,
         passages = req.query.passages === 'true' ? true : undefined,
         passages_count = passages && req.query.passages_count ? req.query.passages_count : undefined;
-
+    let temp = {};
     discovery.query({
         environment_id: req.params.environmentId,
         collection_id: req.params.collectionId,
@@ -103,7 +103,33 @@ router.get('/:environmentId/:collectionId', (req, res) => {
         highlight: highlight
     })
         .then(v => {
-            res.json(v);
+            temp = v;
+            return discovery.queryNotices({
+                environment_id: req.params.environmentId,
+                collection_id: req.params.collectionId,
+                count: 1000
+            });
+        })
+        .then(({results: v}) => {
+            const noticeTable = {};
+            v.forEach(row => {
+                row.notices.forEach(item => {
+                    if (item.document_id && !item.query_id) {
+                        if (noticeTable[item.document_id]) {
+                            noticeTable[item.document_id].push(item);
+                        } else {
+                            noticeTable[item.document_id] = [item];
+                        }
+                    }
+                });
+            });
+            console.log(JSON.stringify(noticeTable, undefined, 2));
+            const results = temp.results.map(item => {
+                item.notices = noticeTable[item.id];
+                return item;
+            });
+            temp.results = results;
+            res.json(temp);
         })
         .catch(e => {
             console.log('error:', e);

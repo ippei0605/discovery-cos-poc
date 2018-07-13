@@ -78,9 +78,39 @@
                     </template>
                   </el-table-column>
                   <el-table-column
+                    type="index"
+                    header-align="left"
+                    align="right"
+                    width="50">
+                  </el-table-column>
+                  <el-table-column
                     width="260"
                     prop="id"
                     label="Id">
+                  </el-table-column>
+                  <el-table-column
+                    prop="notices"
+                    label="Notice"
+                    header-align="left"
+                    align="center"
+                    width="70">
+                    <template slot-scope="props">
+                      <div v-if="props.row.notices">
+                        <el-popover trigger="hover" placement="top">
+                          <p>Notice</p>
+                          <ol style="font-size: 11px; margin-left: -30px">
+                            <li v-for="(item, index) in props.row.notices" :key="index">
+                              [{{item.severity}}] {{item.description}}
+                            </li>
+                          </ol>
+                          <div slot="reference">
+                            <el-tag :type="getNoticeType(props.row.notices)"
+                                    size="small">{{props.row.notices.length}}
+                            </el-tag>
+                          </div>
+                        </el-popover>
+                      </div>
+                    </template>
                   </el-table-column>
                   <el-table-column
                     prop="text"
@@ -211,12 +241,6 @@
                     stripe
                     v-loading="loadingTrainingData"
                     :data="trainingData.queries">
-                    <el-table-column
-                      type="index"
-                      header-align="left"
-                      align="right"
-                      width="50">
-                    </el-table-column>
                     <el-table-column type="expand">
                       <template slot-scope="props">
                         <p>Examples:<br>
@@ -224,6 +248,12 @@
                         <p v-if="props.row.notices">Notices:<br>
                           {{props.row.notices}}</p>
                       </template>
+                    </el-table-column>
+                    <el-table-column
+                      type="index"
+                      header-align="left"
+                      align="right"
+                      width="50">
                     </el-table-column>
                     <el-table-column
                       prop="query_id"
@@ -238,9 +268,10 @@
                       <template slot-scope="props">
                         <div v-if="props.row.notices">
                           <el-popover trigger="hover" placement="top">
-                            <ol style="font-size: 10px">
+                            <p>Notice</p>
+                            <ol style="font-size: 11px; margin-left: -30px">
                               <li v-for="(item, index) in props.row.notices" :key="index">
-                                {{item.description}}
+                                [{{item.severity}}] {{item.description}}
                               </li>
                             </ol>
                             <div slot="reference">
