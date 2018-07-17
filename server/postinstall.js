@@ -48,10 +48,11 @@ discovery.listEnvironments({
         process.exit(0);
     })
     .catch(e => {
-        console.log('error:', e);
         if (e.message === 'The environment already exists.' || e.message === 'The bucket already exists.') {
+            console.log('It has already been initialized, normal end.');
             process.exit(0);
         } else {
+            console.log('error:', e);
             process.exit(1);
         }
     });
