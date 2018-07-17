@@ -333,6 +333,7 @@
         serverUrl: context.serverUrl,
         environmentId: '',
         collectionId: '',
+        bucketName: '',
         info: [],
         result: {
           results: []
@@ -515,7 +516,7 @@
           .then(({data: v}) => {
             this.environmentId = v.environment_id;
             this.collectionId = v.collection_id;
-
+            this.bucketName = v.bucket_name;
             this.info = [
               {
                 item: '/:environment_id/:collection_id',
@@ -523,7 +524,7 @@
               },
               {
                 item: 'bucket',
-                value: 'bucket-ippei0605'
+                value: this.bucketName
               }
             ];
             this.list();

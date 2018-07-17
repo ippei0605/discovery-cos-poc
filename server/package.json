@@ -7,17 +7,26 @@
   "engines": {
     "node": "8.9.4"
   },
+  "config": {
+    "api_endpoint": "https://api.ng.bluemix.net",
+    "app_name": "discovery-cos-poc-ippei0605",
+    "cos_name": "discovery-cos-poc-cos",
+    "cos_alias_name": "discovery-cos-poc-cos-alias",
+    "discovery_name": "discovery-cos-poc-discovery",
+    "bucket_name": "bucket-ippei0605-0001",
+    "environment_name": "my_environment",
+    "collection_name": "my_collection"
+  },
   "scripts": {
-    "login": "ibmcloud login -a https://api.ng.bluemix.net -c 48984e66e3b9b429a0cfe14d0637f075 -o sieg_dev -s survey",
-    "service_create": "ibmcloud resource service-instance-create discovery-cos-poc-cos cloud-object-storage lite global && ibmcloud resource service-alias-create discovery-cos-poc-cos-alias --instance-name discovery-cos-poc-cos && ibmcloud service create discovery lite discovery-cos-poc-discovery",
-    "service_delete": "ibmcloud service unbind discovery-cos-poc discovery-cos-poc-cos-alias && ibmcloud service unbind discovery-cos-poc discovery-cos-poc-discovery && ibmcloud resource service-alias-delete discovery-cos-poc-cos-alias -f && ibmcloud resource service-instance-delete discovery-cos-poc-cos -f && ibmcloud service delete discovery-cos-poc-discovery -f",
+    "login": "ibmcloud login -a $npm_package_config_api_endpoint && ibmcloud target --cf",
+    "service_create": "ibmcloud resource service-instance-create $npm_package_config_cos_name cloud-object-storage standard global && ibmcloud resource service-alias-create $npm_package_config_cos_alias_name --instance-name $npm_package_config_cos_name && ibmcloud service create discovery lite $npm_package_config_discovery_name",
     "build": "cpx \"../client/dist/**\" ./public",
     "clean": "rimraf  ./public/static ./public/index.html",
-    "push": "ibmcloud app push discovery-cos-poc",
+    "push": "ibmcloud app push $npm_package_config_app_name",
     "postinstall": "node postinstall",
     "start": "node app",
-    "page": "opener https://discovery-cos-poc.mybluemix.net/",
-    "vcap_services": "ibmcloud app env discovery-cos-poc | node node_modules/cfenv-one-liner -p VCAP_SERVICES"
+    "page": "opener https://$npm_package_config_app_name.mybluemix.net/",
+    "vcap_services": "ibmcloud app env $npm_package_config_app_name | node node_modules/cfenv-one-liner -p VCAP_SERVICES"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -28,7 +37,7 @@
     "multer": "^1.3.0",
     "serve-favicon": "^2.5.0",
     "vcap_services": "^0.3.4",
-    "watson-developer-cloud": "^3.5.1"
+    "watson-developer-cloud": "^3.7.0"
   },
   "devDependencies": {
     "cfenv-one-liner": "0.0.2",

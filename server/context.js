@@ -6,15 +6,6 @@
 
 'use strict';
 
-// Bucket name (_ はダメらしい)
-const BUCKET_NAME = 'bucket-ippei0605';
-
-// Environment name
-const ENVIRONMENT_NAME = 'my_environment';
-
-//  Collection name
-const COLLECTION_NAME = 'my_collection';
-
 // モジュールを読込む。
 const
     cfenv = require('cfenv'),
@@ -36,7 +27,7 @@ module.exports = {
     URL: url,
     COS_CREDS: cosCreds,
     DISCOVERY_CREDS: discoveryCreds,
-    BUCKET_NAME: BUCKET_NAME,
-    ENVIRONMENT_NAME: ENVIRONMENT_NAME,
-    COLLECTION_NAME: COLLECTION_NAME
+    BUCKET_NAME: process.env.npm_package_config_bucket_name,
+    ENVIRONMENT_NAME: process.env.npm_package_config_environment_name,
+    COLLECTION_NAME: process.env.npm_package_config_collection_name
 };

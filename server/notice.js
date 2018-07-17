@@ -12,8 +12,8 @@ const
     discovery = new DiscoveryModel(context.DISCOVERY_CREDS);
 
 discovery.queryNotices({
-    environment_id: '980db362-d83e-450a-aa19-877b1f76d80f',
-    collection_id: '1f6e45a1-d5e8-4d2f-b460-e7447d3a122b',
+    environment_id: 'd738518d-a68e-4b29-89da-d15d7c455034',
+    collection_id: '251109d7-06dc-428b-beda-fe18472aa75f',
     count: 1000
 })
     .then(v => {

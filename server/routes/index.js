@@ -54,7 +54,8 @@ router.get('/ready', (req, res) => {
             collectionId = v[0].collection_id;
             res.json({
                 environment_id: environmentId,
-                collection_id: collectionId
+                collection_id: collectionId,
+                bucket_name: context.BUCKET_NAME
             });
         })
         .catch(e => {
