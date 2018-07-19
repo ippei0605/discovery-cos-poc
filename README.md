@@ -108,7 +108,8 @@ https://discovery-cos-poc.mybluemix.net/
 
 
 ## 参考
-* http://regex-testdrive.com/ja/
+* Regular Expression Test Drive (Highlightの <em> タグ除去に正規表現を使用)
+    - http://regex-testdrive.com/ja/
 
 ## おまけ
 久々なので、 vlu-cli の手順を記録しておきます。
