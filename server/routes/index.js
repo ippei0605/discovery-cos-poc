@@ -124,7 +124,6 @@ router.get('/:environmentId/:collectionId', (req, res) => {
                     }
                 });
             });
-            console.log(JSON.stringify(noticeTable, undefined, 2));
             const results = temp.results.map(item => {
                 item.notices = noticeTable[item.id];
                 return item;
@@ -280,6 +279,21 @@ router.get('/:environmentId/:collectionId/notices', (req, res) => {
         environment_id: req.params.environmentId,
         collection_id: req.params.collectionId,
         count: count
+    })
+        .then(v => {
+            res.json(v);
+        })
+        .catch(e => {
+            console.log('error:', e);
+            res.sendStatus(500);
+        });
+});
+
+// getCollection を実行する。
+router.get('/:environmentId/:collectionId/status', (req, res) => {
+    discovery.getCollection({
+        environment_id: req.params.environmentId,
+        collection_id: req.params.collectionId,
     })
         .then(v => {
             res.json(v);

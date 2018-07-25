@@ -236,6 +236,34 @@
                 </div>
               </el-tab-pane>
               <el-tab-pane label="Training Data" name="training_data">
+                <div v-loading="loadingCollectionStatus" style="margin-bottom: 10px">
+                  <div v-if="collectionStatus.training_status" style="text-align: center">
+                    <el-tag type="info">
+                      data_updated: <span v-html="vHtmlDatetime(collectionStatus.training_status.data_updated)"></span>
+                    </el-tag>
+                    <el-tag type="info">
+                      total_examples: {{collectionStatus.training_status.total_examples}}
+                    </el-tag>
+                    <el-tag :type="collectionStatus.training_status.sufficient_label_diversity ? 'success' : 'danger'">
+                      sufficient_label_diversity
+                    </el-tag>
+                    <el-tag :type="collectionStatus.training_status.processing ? 'success' : 'danger'">
+                      processing
+                    </el-tag>
+                    <el-tag :type="collectionStatus.training_status.minimum_examples_added ? 'success' : 'danger'">
+                      minimum_examples_added
+                    </el-tag>
+                    <el-tag :type="collectionStatus.training_status.minimum_queries_added ? 'success' : 'danger'">
+                      minimum_queries_added
+                    </el-tag>
+                    <el-tag :type="collectionStatus.training_status.available ? 'success' : 'danger'">
+                      available
+                    </el-tag>
+                    <el-tag type="info" v-if="collectionStatus.training_status.successfully_trained">
+                      successfully_trained: {{collectionStatus.training_status.successfully_trained}}
+                    </el-tag>
+                  </div>
+                </div>
                 <div v-loading="loadingTrainingData">
                   <el-table
                     stripe
@@ -262,9 +290,10 @@
                     <el-table-column
                       prop="notices"
                       label="Notice"
+                      :render-header="renderHeader"
                       header-align="left"
                       align="center"
-                      width="70">
+                      width="100">
                       <template slot-scope="props">
                         <div v-if="props.row.notices">
                           <el-popover trigger="hover" placement="top">
@@ -292,8 +321,12 @@
                       label="Filter">
                     </el-table-column>
                     <el-table-column
+                      sortable
                       prop="updated"
                       label="Updated">
+                      <template slot-scope="scope">
+                        <span v-html="vHtmlDatetime(scope.row.updated)"></span>
+                      </template>
                     </el-table-column>
                     <el-table-column label="Delete" width="60" header-align="center" align="center">
                       <template slot-scope="scope">
@@ -309,6 +342,11 @@
                   <pre>{{notices}}</pre>
                 </div>
               </el-tab-pane>
+              <el-tab-pane label="Collection Status" name="status">
+                <div v-loading="loadingCollectionStatus">
+                  <pre>{{collectionStatus}}</pre>
+                </div>
+              </el-tab-pane>
             </el-tabs>
           </div>
         </el-card>
@@ -318,6 +356,7 @@
 </template>
 
 <script>
+  import moment from 'moment-timezone';
   import qs from 'qs';
   import context from '@/context';
 
@@ -330,6 +369,7 @@
         loadingTrainingData: false,
         loadingNotices: false,
         loadingNlq: false,
+        loadingCollectionStatus: false,
         serverUrl: context.serverUrl,
         environmentId: '',
         collectionId: '',
@@ -355,13 +395,29 @@
         },
         activeTab: 'filter',
         trainingData: {},
-        notices: {}
+        notices: {},
+        collectionStatus: {}
       };
     },
     mounted () {
       this.init();
     },
     methods: {
+      renderHeader (h, {column, $index}) {
+        if (this.collectionStatus.training_status && this.collectionStatus.training_status.notice) {
+          return h('span', null, [
+            h('i', {class: 'el-icon-warning', style: 'margin-right: 5px; color: #F56C6C; font-size: 14px'}),
+            h('span', column.label)
+          ]);
+        } else {
+          return h('span', null, [
+            h('span', column.label)
+          ]);
+        }
+      },
+      vHtmlDatetime (datetime) {
+        return moment(datetime).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm:ss');
+      },
       getNoticeType (notices) {
         let noticeType = 'info';
         for (const item of notices) {
@@ -530,6 +586,7 @@
             this.list();
             this.listTrainingData();
             this.queryNotices();
+            this.getCollection();
             this.loading = false;
           })
           .catch(e => {
@@ -570,6 +627,22 @@
           .catch(e => {
             console.log('error:', e);
             this.loadingTrainingData = false;
+          });
+      },
+      getCollection () {
+        this.loadingCollectionStatus = true;
+        const config = {
+          method: 'get',
+          url: `/${this.environmentId}/${this.collectionId}/status`
+        };
+        context.api(config)
+          .then(({data: v}) => {
+            this.collectionStatus = v;
+            this.loadingCollectionStatus = false;
+          })
+          .catch(e => {
+            console.log('error:', e);
+            this.loadingCollectionStatus = false;
           });
       },
       list () {
