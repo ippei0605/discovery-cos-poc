@@ -86,10 +86,20 @@ https://discovery-cos-poc.mybluemix.net/
     $ npm run build
     ```
 
+1. サービスを作成してください。
+    ```
+    $ npm run service_create
+    ```
+
+    > 削除コマンドは用意してません。(バインドやキーがあると削除できず、両者の状態を特定するのが難しいため。)
+
 1. アプリをプッシュしてください。
     ```
     $ npm run push
     ```
+
+    > IBM Cloud 側で `postinstall.js` が実行され、Discovery と Cloud Object Storage を初期化します。
+    > 処理が失敗する場合は、`package.json` の設定値を見直し、IBM Cloud のダッシュボードからアプリ、サービスインスタンス、サービスエイリアエスを削除してください。サービスの作成から再実行してください。
 
 1. アプリを起動してください。
     ```
@@ -98,7 +108,8 @@ https://discovery-cos-poc.mybluemix.net/
 
 
 ## 参考
-* http://regex-testdrive.com/ja/
+* Regular Expression Test Drive (Highlightの <em> タグ除去に正規表現を使用)
+    - http://regex-testdrive.com/ja/
 
 ## おまけ
 久々なので、 vlu-cli の手順を記録しておきます。
