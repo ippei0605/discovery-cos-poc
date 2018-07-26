@@ -238,30 +238,41 @@
               <el-tab-pane label="Training Data" name="training_data">
                 <div v-loading="loadingCollectionStatus" style="margin-bottom: 10px">
                   <div v-if="collectionStatus.training_status" style="text-align: center">
-                    <el-tag type="info">
-                      data_updated: <span v-html="vHtmlDatetime(collectionStatus.training_status.data_updated)"></span>
-                    </el-tag>
-                    <el-tag type="info">
-                      total_examples: {{collectionStatus.training_status.total_examples}}
-                    </el-tag>
-                    <el-tag :type="collectionStatus.training_status.sufficient_label_diversity ? 'success' : 'danger'">
-                      sufficient_label_diversity
-                    </el-tag>
-                    <el-tag :type="collectionStatus.training_status.processing ? 'success' : 'danger'">
-                      processing
-                    </el-tag>
-                    <el-tag :type="collectionStatus.training_status.minimum_examples_added ? 'success' : 'danger'">
-                      minimum_examples_added
-                    </el-tag>
-                    <el-tag :type="collectionStatus.training_status.minimum_queries_added ? 'success' : 'danger'">
-                      minimum_queries_added
-                    </el-tag>
-                    <el-tag :type="collectionStatus.training_status.available ? 'success' : 'danger'">
-                      available
-                    </el-tag>
-                    <el-tag type="info" v-if="collectionStatus.training_status.successfully_trained">
-                      successfully_trained: {{collectionStatus.training_status.successfully_trained}}
-                    </el-tag>
+                    <div style="margin-bottom: 5px">
+                      <el-tag type="info">
+                        data_updated: <span
+                        v-html="vHtmlDatetime(collectionStatus.training_status.data_updated)"></span>
+                      </el-tag>
+                      <el-tag
+                        :type="collectionStatus.training_status.successfully_trained > collectionStatus.training_status.data_updated ? 'info' : 'warning'">
+                        successfully_trained: <span
+                        v-html="vHtmlDatetime(collectionStatus.training_status.successfully_trained)"></span>
+                      </el-tag>
+                      <el-tag type="info">
+                        total_examples: {{collectionStatus.training_status.total_examples}}
+                      </el-tag>
+                      <el-button type="primary" icon="el-icon-refresh" circle
+                                 style="float: right; margin-right: 14px"
+                                 @click="getCollection"></el-button>
+                    </div>
+                    <div>
+                      <el-tag
+                        :type="collectionStatus.training_status.sufficient_label_diversity ? 'success' : 'danger'">
+                        sufficient_label_diversity
+                      </el-tag>
+                      <el-tag :type="collectionStatus.training_status.processing ? 'success' : 'danger'">
+                        processing
+                      </el-tag>
+                      <el-tag :type="collectionStatus.training_status.minimum_examples_added ? 'success' : 'danger'">
+                        minimum_examples_added
+                      </el-tag>
+                      <el-tag :type="collectionStatus.training_status.minimum_queries_added ? 'success' : 'danger'">
+                        minimum_queries_added
+                      </el-tag>
+                      <el-tag :type="collectionStatus.training_status.available ? 'success' : 'danger'">
+                        available
+                      </el-tag>
+                    </div>
                   </div>
                 </div>
                 <div v-loading="loadingTrainingData">
@@ -337,12 +348,12 @@
                   </el-table>
                 </div>
               </el-tab-pane>
-              <el-tab-pane label="Notice" name="notice">
+              <el-tab-pane label="Notice (Raw data)" name="notice">
                 <div v-loading="loadingNotices">
                   <pre>{{notices}}</pre>
                 </div>
               </el-tab-pane>
-              <el-tab-pane label="Collection Status" name="status">
+              <el-tab-pane label="Collection Status  (Raw data)" name="status">
                 <div v-loading="loadingCollectionStatus">
                   <pre>{{collectionStatus}}</pre>
                 </div>
@@ -404,7 +415,7 @@
     },
     methods: {
       renderHeader (h, {column, $index}) {
-        if (this.collectionStatus.training_status && this.collectionStatus.training_status.notice) {
+        if (this.collectionStatus.training_status && this.collectionStatus.training_status.notice > 0) {
           return h('span', null, [
             h('i', {class: 'el-icon-warning', style: 'margin-right: 5px; color: #F56C6C; font-size: 14px'}),
             h('span', column.label)
