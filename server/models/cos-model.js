@@ -68,6 +68,44 @@ class CosModel {
         });
     }
 
+    getBucketCors (name) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.cos.getBucketCors({
+                    Bucket: name
+                }, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    putBucketCors (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.cos.putBucketCors(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
     putObject (params) {
         return new Promise((resolve, reject) => {
             try {

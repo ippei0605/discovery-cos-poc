@@ -123,6 +123,8 @@
                     <template slot-scope="scope">
                       <a :href="serverUrl + 'cos/' + scope.row.extracted_metadata.filename"
                          target="_blank">{{scope.row.extracted_metadata.filename}}</a>
+                      <br><a href="javascript:void(0)"
+                             @click="doDirect(scope.row.extracted_metadata.filename)">[direct]</a>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -370,11 +372,13 @@
   import moment from 'moment-timezone';
   import qs from 'qs';
   import context from '@/context';
+  import CosModel from '@/cos-model';
 
   export default {
     name: 'Discovery',
     data () {
       return {
+        cos: null,
         loading: false,
         loadingTable: false,
         loadingTrainingData: false,
@@ -411,9 +415,24 @@
       };
     },
     mounted () {
+      this.cos = new CosModel(context.cosCreds);
       this.init();
     },
     methods: {
+      doDirect (key) {
+        console.log('###', key);
+        this.cos.getObject({
+          Bucket: this.bucketName,
+          Key: key
+        })
+          .then(v => {
+            console.log(v.ContentType);
+          })
+          .catch(e => {
+            console.log('error:', e);
+          });
+        // window.open('http://xn--9oqrews92vs03aufm3yt.jp/');
+      },
       renderHeader (h, {column, $index}) {
         if (this.collectionStatus.training_status && this.collectionStatus.training_status.notice > 0) {
           return h('span', null, [
