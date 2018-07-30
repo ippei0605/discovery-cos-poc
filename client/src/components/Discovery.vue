@@ -222,11 +222,12 @@
                       <i class="el-icon-info" style="margin-right: 10px"></i>
                       各文書の妥当性 (relevance) を 0 から 100 に設定してください。</p>
                     <ol>
-                      <li v-for="(item, index) in nlqResult.results" :key="index" style="margin-top: 10px">
-                        <a :href="getUrl(item)" target="_blank">{{item.extracted_metadata.filename}}</a>
+                      <li v-for="(item, index) in nlqResult.results" :key="index" style="margin: 10px">
+                        <a :href="getUrl(item)"
+                           target="_blank" class="new-training-data">{{item.extracted_metadata.filename}}</a>
                         <el-input-number v-model="TrainingForm.examples[index].relevance"
                                          size="mini" :min="0" :max="100"
-                                         style="min-width: 130px; max-width: 130px;float: right;"></el-input-number>
+                                         style="margin-top: -30px; min-width: 130px; max-width: 130px;float: right;"></el-input-number>
                       </li>
                     </ol>
                     <el-form-item style="margin-top:20px; float: right">
@@ -782,5 +783,13 @@
 
   a {
     color: #42b983;
+  }
+
+  a.new-training-data {
+    display: block;
+    width: 85%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 </style>
