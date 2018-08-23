@@ -106,11 +106,11 @@ https://discovery-cos-poc-ippei0605.mybluemix.net/
 
 ## まとめ
 * Discovery と Cloud Object Storage により PDF の検索アプリを作成できました。(Relevance 対応)
-* Discovery の日本語のハイライトは加工する場合は文字コード (Kangxi) の問題で工夫が必要です。
+* Discovery の日本語のハイライトを加工する場合は、文字コード (Kangxi) の問題で工夫が必要です。
 * Cloud Object Storage へのアクセスは次の3通りの方法があります。
   - コマンドライン (curl, 初回 apikey で IAM token を要求し、その後は IAM token でコマンドを実行)
     - https://console.bluemix.net/docs/services/cloud-object-storage/cli/curl.html#using-curl-
-  - クライアントライブラリ と apikey によるアクセス (本アプリはこちらで実装)
+  - クライアントライブラリ と apikey によるアクセス (本アプリはこちらの方法で実装しました。)
   - 直接アクセス
     - Bucket および Object の ACL を共に `public-read` にすることで、ブラウザから次のようにアクセスすることができます。
       - https://s3-api.us-geo.objectstorage.softlayer.net/bucket-ippei0605-0001/_watsonsummit2017_session_list.pdf
