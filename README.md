@@ -4,7 +4,7 @@
 とあるシステムに IBM Discovery を組み込むため、関連技術の調査をします。Discovery に登録する文書本体は Cloud Object Storage に登録します。
 
 ## デモアプリ
-https://discovery-cos-poc.mybluemix.net/
+https://discovery-cos-poc-ippei0605.mybluemix.net/
 
 * 文書登録・削除
 * 自然言語検索 (Passage, ハイライト表示)
@@ -114,7 +114,7 @@ https://discovery-cos-poc.mybluemix.net/
   - 直接アクセス
     - Bucket および Object の ACL を共に `public-read` にすることで、ブラウザから次のようにアクセスすることができます。
       - https://s3-api.us-geo.objectstorage.softlayer.net/bucket-ippei0605-0001/_watsonsummit2017_session_list.pdf
-    - [ACL 設定のサンプルコード](./server/acl.js)
+    - ACL 設定のサンプルコード [server/acl.js](./server/acl.js)
 
 
 ## 参考
