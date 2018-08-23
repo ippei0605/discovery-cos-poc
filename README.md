@@ -6,14 +6,12 @@
 ## デモアプリ
 https://discovery-cos-poc.mybluemix.net/
 
-* 文書登録
-* 文書削除
-* 自然言語検索
+* 文書登録・削除
+* 自然言語検索 (Passage, ハイライト表示)
+  - PDF を表示した際にハイライトできるのは Firefox のみ (ブラウザの制約)
+  - ハイライトの文字列 (<em> ダグ内の文字列) は CJK ではなく Kangxi に変換されている。(Discovery の問題) 一部文字がヒット一致しないため、内部で変換テーブルを用意した暫定対応する。
+* Relevance 登録・検索
 
-
-## 残課題
-* Relevance 登録および検索への影響確認
-* UI ページング
 
 ## 環境構築手順
 ### 準備
@@ -106,10 +104,26 @@ https://discovery-cos-poc.mybluemix.net/
     $ npm run page
     ```
 
+## まとめ
+* Discovery と Cloud Object Storage により PDF の検索アプリを作成できました。(Relevance 対応)
+* Discovery の日本語のハイライトは加工する場合は文字コード (Kangxi) の問題で工夫が必要です。
+* Cloud Object Storage へのアクセスは次の3通りの方法があります。
+  - コマンドライン (curl, 初回 apikey で IAM token を要求し、その後は IAM token でコマンドを実行)
+    - https://console.bluemix.net/docs/services/cloud-object-storage/cli/curl.html#using-curl-
+  - クライアントライブラリ と apikey によるアクセス (本アプリはこちらで実装)
+  - 直接アクセス
+    - Bucket および Object の ACL を共に `public-read` にすることで、ブラウザから次のようにアクセスすることができます。
+      - https://s3-api.us-geo.objectstorage.softlayer.net/bucket-ippei0605-0001/_watsonsummit2017_session_list.pdf
+    - [ACL 設定のサンプルコード](./server/acl.js)
+
 
 ## 参考
 * Regular Expression Test Drive (Highlightの <em> タグ除去に正規表現を使用)
     - http://regex-testdrive.com/ja/
+* Unicode/コード表
+    - http://www.bugbearr.jp/?Unicode%2F%E3%82%B3%E3%83%BC%E3%83%89%E8%A1%A8
+* 社内の部会で説明した資料
+    - [docs/部会_20180726.pptx](./docs/部会_20180726.pptx)
 
 ## おまけ
 久々なので、 vlu-cli の手順を記録しておきます。

@@ -22,4 +22,5 @@ coverage
 .command-memo
 package-lock.json
 dist
+docs
 upload

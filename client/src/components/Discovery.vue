@@ -4,18 +4,9 @@
       <el-col :span="14" style="padding: 5px 5px">
         <h1>Discovery COS PoC</h1>
         <el-table
-          v-loading="loading"
-          :data="info"
-          style="width: 100%">
-          <el-table-column
-            prop="item"
-            label="Item"
-            width="200">
-          </el-table-column>
-          <el-table-column
-            prop="value"
-            label="Value">
-          </el-table-column>
+          v-loading="loading" :data="info" style="width: 100%">
+          <el-table-column prop="item" label="Item" width="200"></el-table-column>
+          <el-table-column prop="value" label="Value"></el-table-column>
         </el-table>
         <div style="margin-top: 20px; text-align: center">
           <el-form size="medium" :inline="true" :model="form">
@@ -68,32 +59,15 @@
           <div>
             <el-tabs v-model="activeTab">
               <el-tab-pane label="All documents (Filter)" name="filter">
-                <el-table
-                  stripe
-                  v-loading="loadingTable"
-                  :data="result.results">
+                <el-table stripe v-loading="loadingTable" :data="result.results">
                   <el-table-column type="expand">
                     <template slot-scope="props">
                       {{ props.row.text }}
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    type="index"
-                    header-align="left"
-                    align="right"
-                    width="50">
-                  </el-table-column>
-                  <el-table-column
-                    width="260"
-                    prop="id"
-                    label="Id">
-                  </el-table-column>
-                  <el-table-column
-                    prop="notices"
-                    label="Notice"
-                    header-align="left"
-                    align="center"
-                    width="70">
+                  <el-table-column type="index" header-align="left" align="right" width="50"></el-table-column>
+                  <el-table-column width="260" prop="id" label="Id"></el-table-column>
+                  <el-table-column prop="notices" label="Notice" header-align="left" align="center" width="70">
                     <template slot-scope="props">
                       <div v-if="props.row.notices">
                         <el-popover trigger="hover" placement="top">
@@ -112,26 +86,15 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="text"
-                    label="text"
-                    :formatter="formatText">
-                  </el-table-column>
-                  <el-table-column
-                    prop="extracted_metadata.filename"
-                    label="Filename">
+                  <el-table-column prop="text" label="text" :formatter="formatText"></el-table-column>
+                  <el-table-column prop="extracted_metadata.filename" label="Filename">
                     <template slot-scope="scope">
                       <a :href="serverUrl + 'cos/' + scope.row.extracted_metadata.filename"
                          target="_blank">{{scope.row.extracted_metadata.filename}}</a>
-                      <br><a href="javascript:void(0)"
-                             @click="doDirect(scope.row.extracted_metadata.filename)">[direct]</a>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    width="120"
-                    prop="extracted_metadata.publicationdate"
-                    label="Publicationdate">
-                  </el-table-column>
+                  <el-table-column prop="extracted_metadata.publicationdate" label="Publicationdate"
+                                   width="120"></el-table-column>
                   <el-table-column label="Delete" width="60" header-align="center" align="center">
                     <template slot-scope="scope">
                       <el-button size="mini" type="danger" icon="el-icon-delete" circle
@@ -279,10 +242,7 @@
                   </div>
                 </div>
                 <div v-loading="loadingTrainingData">
-                  <el-table
-                    stripe
-                    v-loading="loadingTrainingData"
-                    :data="trainingData.queries">
+                  <el-table stripe v-loading="loadingTrainingData" :data="trainingData.queries">
                     <el-table-column type="expand">
                       <template slot-scope="props">
                         <p>Examples:<br>
@@ -291,23 +251,10 @@
                           {{props.row.notices}}</p>
                       </template>
                     </el-table-column>
-                    <el-table-column
-                      type="index"
-                      header-align="left"
-                      align="right"
-                      width="50">
-                    </el-table-column>
-                    <el-table-column
-                      prop="query_id"
-                      label="Id">
-                    </el-table-column>
-                    <el-table-column
-                      prop="notices"
-                      label="Notice"
-                      :render-header="renderHeader"
-                      header-align="left"
-                      align="center"
-                      width="100">
+                    <el-table-column type="index" header-align="left" align="right" width="50"></el-table-column>
+                    <el-table-column prop="query_id" label="Id"></el-table-column>
+                    <el-table-column prop="notices" label="Notice" :render-header="renderHeader" header-align="left"
+                                     align="center" width="100">
                       <template slot-scope="props">
                         <div v-if="props.row.notices">
                           <el-popover trigger="hover" placement="top">
@@ -326,18 +273,9 @@
                         </div>
                       </template>
                     </el-table-column>
-                    <el-table-column
-                      prop="natural_language_query"
-                      label="Natural Language Query">
-                    </el-table-column>
-                    <el-table-column
-                      prop="filter"
-                      label="Filter">
-                    </el-table-column>
-                    <el-table-column
-                      sortable
-                      prop="updated"
-                      label="Updated">
+                    <el-table-column prop="natural_language_query" label="Natural Language Query"></el-table-column>
+                    <el-table-column prop="filter" label="Filter"></el-table-column>
+                    <el-table-column sortable prop="updated" label="Updated">
                       <template slot-scope="scope">
                         <span v-html="vHtmlDatetime(scope.row.updated)"></span>
                       </template>
@@ -372,8 +310,7 @@
 <script>
   import moment from 'moment-timezone';
   import qs from 'qs';
-  import context from '@/context';
-  import CosModel from '@/cos-model';
+  import context from '../context';
 
   export default {
     name: 'Discovery',
@@ -416,24 +353,9 @@
       };
     },
     mounted () {
-      this.cos = new CosModel(context.cosCreds);
       this.init();
     },
     methods: {
-      doDirect (key) {
-        console.log('###', key);
-        this.cos.getObject({
-          Bucket: this.bucketName,
-          Key: key
-        })
-          .then(v => {
-            console.log(v.ContentType);
-          })
-          .catch(e => {
-            console.log('error:', e);
-          });
-        // window.open('http://xn--9oqrews92vs03aufm3yt.jp/');
-      },
       renderHeader (h, {column, $index}) {
         if (this.collectionStatus.training_status && this.collectionStatus.training_status.notice > 0) {
           return h('span', null, [

@@ -106,6 +106,83 @@ class CosModel {
         });
     }
 
+    getBucketAcl (name) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.cos.getBucketAcl({
+                    Bucket: name
+                }, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    putBucketAcl (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.cos.putBucketAcl(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    putObjectAcl (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.cos.putObjectAcl(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
+    getObjectAcl (bucket, key) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.cos.getObjectAcl({
+                    Bucket: bucket,
+                    Key: key
+                }, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
     putObject (params) {
         return new Promise((resolve, reject) => {
             try {
