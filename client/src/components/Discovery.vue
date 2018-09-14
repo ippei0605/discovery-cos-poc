@@ -553,6 +553,7 @@
                 for (const text of item.highlight.text) {
                   const keyword = text.match(/<em>.*?<\/em>/g);
                   keyword.forEach(item => {
+                    // temp.push(item.replace(/<[/]?em>/g, ''));
                     temp.push(this.kangxiToCjk(item.replace(/<[/]?em>/g, '')));
                   });
                 }

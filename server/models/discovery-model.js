@@ -17,7 +17,7 @@ class DiscoveryModel {
             this.discovery = new DiscoveryV1({
                 username: creds.username,
                 password: creds.password,
-                version_date: '2018-03-05'
+                version_date: '2018-08-01'
             });
         } catch (e) {
             console.log('error:', e);
