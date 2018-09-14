@@ -63,6 +63,25 @@ class DiscoveryModel {
         });
     }
 
+    // https://www.ibm.com/watson/developercloud/discovery/api/v1/node.html?node#list-expansions
+    listExpansions (params) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.discovery.listExpansions(params, (error, value) => {
+                    if (error) {
+                        console.log('error:', error);
+                        reject(error);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } catch (e) {
+                console.log('error:', e);
+                reject(e);
+            }
+        });
+    }
+
     listEnvironments (params) {
         return new Promise((resolve, reject) => {
             try {
