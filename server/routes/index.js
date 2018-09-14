@@ -16,6 +16,20 @@ const
     CosModel = require('../models/cos-model'),
     DiscoveryModel = require('../models/discovery-model');
 
+// アップロードディレクトリーがない場合は作成する。
+const UPLOAD_DIR = 'upload/';
+fs.access(UPLOAD_DIR, e => {
+    if (e) {
+        if (e.code === 'ENOENT') {
+            fs.mkdir(UPLOAD_DIR, e => {
+                if (e) console.log('error', e);
+            });
+        } else {
+            console.log('error', e);
+        }
+    }
+});
+
 // モデルを作成する。
 const
     cos = new CosModel(context.COS_CREDS),
@@ -29,7 +43,7 @@ module.exports = router;
 const upload = multer({
     "storage": multer.diskStorage({
         "destination": (req, file, cb) => {
-            cb(null, 'upload/');
+            cb(null, UPLOAD_DIR);
         },
         "filename": (req, file, cb) => {
             cb(null, file.originalname);
